@@ -1,0 +1,1050 @@
+﻿<<<<<<------ Comandos em SQL Usando o Terminal ----->>>>> 
+
+Windows – vá ate a pasta do mysql onde estiver instalado:
+Ex:c:/program files/mysql/mysql_workbank/
+
+Se não tiver configurado senha e usuário:
+Mysql -u admin 
+Se tiver password
+Mysql -u admin -p root
+
+Para executar um arquivo externo ou dump, basta entrar com
+
+source nomedoArquivo.sql
+
+Obs: dependendo da localização use o mesmo referente de pastas
+
+source c:/pastaX/pastaZ/arquivo.sql
+
+Se configurado pelo Linux via terminal-→
+ 
+ mysql-start
+
+ mysql-ctl cli
+
+Entra no mysql
+
+Depois é buscar pelas databases já criadas,
+
+show databases;
+
+Se não tiver uma database basta criar uma 
+
+CREATE DATABASE nomedaDatabase;
+
+****(IMPORTANTE)**************
+se for escrever o script lembre-se de também definir qual base será usada
+USE nomeDadatabase, de outra forma ele irá rodar o comando do create
+e não compilar o restando tendo em vista não saber o qual database usar.
+
+Selecione a database
+
+use database;
+
+******* Para saber qual database estou usadno ??? *********
+
+SELECT database();
+
+crie uma tabela
+
+CREATE TABLE nomedatabela(colunas tipodecaractere(tamanhodele), ...);
+
+********(IMPORTANTE)***************
+Veja tipos de dados (VARCHAR,INT,CHAR ...)
+Chave Primária = PRIMARY KEY
+Valores não nulos = NOT NULL
+Valores que se incrementam - somatório = AUTO_INCREMENT 
+Valores UNIQUE quando não quero valores repetidos
+
+Excluir os valores da tabela.
+
+DROP TABLE nome da tabela;
+
+********IMPORTANTE ***************
+
+quando existir relacionamento, bastar DROPAR A TABELA PAI E A TABELA FILHA VAI SER DELETADA	TAMBÉM.
+*se tentar fazer o contrário não vai dar certo
+
+
+Excluir a database(ou seja a estrutura completa)
+
+DROP DATABASE nome da database ou do schema;
+
+/***************** INSERINDO VALORES ***********************/
+criar os campos da tabela CREATE TABLE nomeTabela(Campos);
+
+Inserindo dados na Tabela
+
+INSERT INTO nomedatabela(camposdatabela que o values vai preencher) values(Valores correspontes aos das colunas da sua tabela(Tipos iguais,tamanho,demais settings));
+
+⇒ /* Deletar uma linha da tabela */
+
+delete from nomedatambela WHERE geralmente o id a condição que igualada irá apresentar um resultado;
+
+⇒ Incluir uma nova coluna na tabela
+
+ALTER TABLE nomedaTabela ADD NomedaColuna Tipododado;
+
+********* Coluna DEFAULT ************
+A coluna default insere um dado quando ele não estiver declarado na query por padrão, é diferente de Vazio '' string ou null, quando é explicitamente null se eu inserir um valor vazio vai aparecer vazio ou quando em erro vai aparecer '0'
+quando eu declaro NOT NULL É PORQUE NÃO QUERO VALORES NULOS.
+
+
+⇒ show warnings; - mostra os erros 
+
+
+*************Para adcionar mais de um registo no insert **********
+
+INSERT INTO tabela (colunas) values (nome,idade,telefone,endereço...),(nome,idade,telefone,endereço...)... basta ir repetindo a estrutura e usar a virgula entre os operadores.
+
+
+ALIASES --- Apelidos (Acesso Rápido)
+
+Só mudar o nome no select não altera a tabela
+
+**** Você pode mudar o nome da tabela que aparece se a query for um registro muito truncado.
+
+Ex: 
+SELECT id_cliente AS idcli from Cliente;
+
+Chamei o id_cliente apenas de idcli.
+
+OUTRO EXEMPLO
+
+SELECT (nome_cli,sobre_cli) from dados_cadastro; pode ser assim
+SELECT (nome_cli,sobre_cli) AS 'CLIENTES' from dados_cadastro; pode ser assim -+ Lembre-se da string no nome em aliases.
+
+
+⇒ UPDATE
+
+São três palavras Chave 
+
+UPDATE SET WHERE
+
+eX: UPDATE nomedatabela SET coluna = novo dado WHERE coluna = dado antigo;
+
+A logica do update é a seguinte
+
+Comando update seleciona a tabela, Setar a atuliazação,ou seja:
+nome da coluna = novo dado 
+Onde será esse novo dado where? 
+segue a mesma lógica só que de onde você quer alterar? lembrado, se eu apontei a coluna e o valor,logo também devo declarar a mesma sentença
+nome da coluna = valor atual.
+
+********* use sempre o comando select antes de usar o comando update para garantir que o dado a ser atualizado é aquele mesmo *******
+
+
+⇒ DELETE
+
+DELETE FROM tabela WHERE = condição(coluna,linha,id,por ai vai)
+
+Sempre use condição 
+Sempre use select antes do delete
+
+****Condição do Where***
+
+> maior 
+< menor
+>= maior igual
+<= menor igual
+<> diferente
+|| e
+= igual 
+
+************************ ALTER TABLE ***************************
+
+O alter table é uma ddl ou seja manipula as definições da TABELA  e não seus valores
+
+⇒ Adcionar uma coluna
+ALTER TABLE nome da tabela ADD nome da coluna e tipo de dado;(varchar...int...not null etc)
+
+Excluir uma coluna:
+ALTER TABLE nome da tabela DROP COLUMN nome da coluna
+
+⇒ Alterar uma coluna
+
+ALTER TABLE nome da coluna ALTER COLUMN nome da coluna tipo de dado(varchar...int...not null etc)
+
+
+/****************** IFFNULL *****************/
+
+Esse truque serve para se existirem valores nulos na coluna você substituir por outro no select
+
+ex:
+
+    SELECT valorA,valorB,IFFNULL(valorC,0) FROM tabela;
+    
+    ou seja todos os valores = null serão agora 0
+    
+    
+/********************* ROUND *************************/
+
+arredondando valores
+
+SELECT ROUND(AVG(valorX),2) FROM tabelaY; ** onde 2 é o numero de digitos depois da virgula, sem marcação ele considera 1 como default
+
+Os valores são arredondados 
+
+
+*********** Invocando Arquivos externos *************
+
+Para executar comandos e scripts fora do sql basta criar um arquivo texto com os scripts e nomear como .sql
+Com isso é possível chamar o arquivo pelo comando já no bash do myasql
+
+mysql> source arquivo.sql
+
+Com isso é possível executar tanto comandos DML quanto comandos DDL e DCL 
+Dar permissões alterar valores e demais comandos, bastando para isso alterar e rodar o script novamente.
+
+⇒ CONCATENANDO
+
+CONCAT - função que concatena saída do SELECT ou outra saida
+SELECT CONCAT(valor1,' ',valor2...) from nomedaTabela; *** ' ' string vazia para tabular melhor
+CONCAT_WS('-','nome1','nome2'...) inclui um caracter pontual entre os nomes e vai repetindo
+
+SUBSTRING ----- Também existe no SQL 
+
+select substring('hello world',1,4); = 'hell' começa no 1 e não no zero,não é um vector observe de outro modo 
+⇒ select substring('hello world',7); = 'world' sem indicar o começo ele pega a primeira da ordem e segue até o final.
+
+*******EXEMPLO de encurtamento usando subtring do titulo*********
+SELECT CONCAT(SUBSTRING(title,1,10),'...') AS 'Short Title' from books; 
+
+Select Replace ou seja trocar uma string dentro da query
+
+select replace ('Hello World','o','0'); =  Hell0 W0rld  Todo o 'o' vai ser substituido por zero é case sensitive ou seja
+o que você atribuir ele vai mudar 
+
+outro exemplo
+
+select replace('cheese bread butter',' ','and');
+SELECT REPLACE(CONCAT('I',' ','LIKE',' ','GIRLS',' ','A LOT'),' ','->'); ->>>> OBSERVE QUE ' ' é o que existe '->' é o que vai substituir
+
+
+POdemos combinar
+
+Select REPLACE(SUBSTRING coluna, 'e','E') from tabela;
+ou pode usar o concat dai vai embora
+
+
+REVERSE - inverte uma string 
+
+select reverse('Delevedove');
+evodeveleD
+
+
+⇒ char_length
+
+Contagem de Caracteres
+
+SELECT CHAR_LENGTH('delevedove');
+10
+
+UPPER e LOWER
+
+SELECT UPPER('hello world'); = HELLO WORLD
+SELECT LOWER('HELLO WORLD'); = hello world
+
+
+
+
+**************** Query do Exercicio *****************
+
+SELECT Concat(substring(title,1,10),'...')as 'Short Title',
+       Concat(author_lname,',',author_fname)as 'Author',
+       Concat(stock_quantity,' ','in stock')as 'Quantity'
+                                                                    
+
+FROM books;
+
+
+⇒ Distinc 
+
+O comando distinc retorna somente dados únicos. Por exemplo se na tabela contiver dois nomes iguais
+ele só retorna um.
+
+SELECT DISTINCT nomedaColuna from books;
+
+/*/*/*/*/ Observação importante. Se Você solicitar duas colunas o distinc vai realizar o filtro em cada coluna individualmente 
+
+ex:
+
+Coluna 01 - Coluna 02 
+
+A           A
+B           D
+C           A
+
+*Isso acontece porque o dado da coluna 1 também tem um dado com mesmo conteudo da coluna 2 portanto ele respeita a correspondente
+
+
+/********** ORDER BY **************/
+
+Ordenar a apresentação dos dados,quando seleciono na  mesma tabela e mesma tabela em order by, ele organiza tudo dentro da propria tabela
+
+SELECT nomedaColuna FROM books ORDER BY nomedaColuna;
+
+Isso vai retornar uma coluna com as linhas em ordem alfabética.
+
+POR DEFAULT É SEMPRE DE CIMA PRA BAIXO
+
+PARA INVERTER A ORDEM USE DESC (ordena de baixo para cima)
+
+SELECT nomedaColuna FROM books ORDER BY nomedaColuna DESC;
+
+PARA ORDEM DIRETA TAMBÉM USE ASC
+
+SELECT nomedaColuna FROM books ORDER BY nomedaColuna ASC;
+
+PODEMOS USAR UM INDICE DE POSIÇÃO AO INVÉS DE DECLARAR A COLUNA
+
+SELECT coluna1,coluna2,coluna3... FROM books ORDER BY 2; ->>>>>> o resultado será ordenar tomando como base na coluna 2
+
+⇒ PODEMOS ORDENAR MAIS DE UMA COLUNA PORÉM A ORDEM VAI DEPENDER DO MAIS ORDENADO
+
+SELECT coluna1,coluna2,coluna3... FROM books ORDER BY coluna1,coluna2;
+
+⇒ LIMIT
+
+LIMIT você pode limitar quantos resultados retornar
+
+SELECT coluna FROM tabela ORDER BY coluna LIMITE 5; -> ENTÃO 5 LINHAS SERÃO APRESENTADAS
+
+LIMIT 1,5 TAMBÉM podemos criar um inicial e um range até a 5 linha
+
+VAMOS SUPOR QUE EU PRECISE ACESSAR APENAS UMA LINHA NO MEIO DE MUITAS EX: LINHA 11
+
+SELECT coluna FROM tabela ORDER BY coluna LIMIT 10,1; -> PORTANTO A LINHA ONZE IRÁ SER APRESENTADA
+
+
+
+/************** HAVING ******************************/
+
+
+FILTRO para ser usado com funções agregadas ou com subqueries como o where aparentemente ele tem o mesmo efeito, porém ele separa um grupo de condições que tenham aquela premissa e não apenas a condição em si 
+
+ex:
+SELECT COUNT(CustomerID), Country
+FROM Customers GROUP BY Country HAVING COUNT(CustomerID) > 5;
+
+
+
+/************* LIKE ******************/
+
+O LIKE é usado quando sei apenas parte da informação que quero retorno (LEMBRANDO - É USADA COM WHERE SEMPRE)
+
+SELECT coluna1,coluna2 ... FROM tabela WHERE coluna2 LIKE '%be%'; = isso é como dizer que preciso de um resultado que contenha a string 'da' na sua estrutura, portando a tabela que declarei na qual uma ou mais de uma linha possuir um 'be' irá ser retornada. Ou seja '% ...%' QUER DIZER QUALQUER COISA DENTRO DESSA STRING QUANDO USAMOS APENAS 'nomeQualquer%' DAI SIM ELE ESPECIFICA POR EXATAMENTE O QUE ESTÁ ENTRE %
+
+SELECT coluna1,coluna2 ... FROM tabela WHERE coluna2 LIKE 'be%'; ** OBSERVE QUE ASSIM IRÁ PROCURAR PELO QUE COMEÇA COM be
+
+SE VOCÊ QUISER NO FINAL BASTA DECLARAR ASSIM '%qualqueNome';
+
+AINDA EXISTE MAIS UMA POSSIBILIDADE QUE É A BUSCA POR ESPAÇOS '____' 4 UNDESCORES 
+
+SELECT coluna1 FROM tabela WHERE coluna1 LIKE '____'; isso é bem útil na busca por telefones
+
+====================== ESCAPE ==============================
+
+⇒ Declarar um escape com LIKE
+
+% PERCENT = '%\%%' O PERCENT DO MEIO É o scape
+_ underscore = '%\_%' o underscore é o do meio e o scape é o backslash
+
+
+
+/***************************** FILTROS ****************************/
+
+DISTINCT --> Valores unicos em uma coluna
+LIKE ---> PRECISA DE WHERE
+WHERE --> NÃO PRECISA DE LIKE
+LIMIT --> número máximo e ou mínimo de resultados retornados
+ASC --> Ascendente
+DESC --> Descendente 
+ORDER BY --> Selecione um critério
+
+
+/************* Agregated Functions ****************/
+
+
+SELECT COUNT(*) FROM tabela; -> retorna exatamente o número de linhas da tabela.
+
+** Perceba que quando deletamos um registro, o id não muda e a contagem vai parecer furada do tipo 22 25 30...
+com o COUNT (*) ele retorna exatamente a soma de todas as linhas sem respeitar a ordem do id
+porém se você quiser retornar apenas valores únicos é preciso usar DISTINCT
+
+SELECT COUNT(DISTINCT nomeDaColuna)FROM tabela;
+
+-------> IMPORTANTE = o COUNT depois de outras colunas,conta quantos elementos a linha possui.
+Ex SELECT coluna1,coluna2,coluna3...COUNT(*) FROM tabela GROUP BY coluna1,coluna2;
+Nesse Caso o COUNT conta quantos valores das linhas,exempo se a coluna1 tem 2 ocorrencias na tabela
+se a coluna3 tem uma ou mais ocorrencias
+
+/****************IMPORTANTE SOBRE O COUNT *********************/
+
+Para obter uma contagem completa é preciso usar o COUNT(*) e lista as colunas antes,além de agrupar
+pela coluna onde os indices se repetem, dessa forma os indices iguais se agrupam e você obtem o valor
+quantitativo de quantos repetidos tem na coluna
+
+ex:
+
+SELECT coluna1,coluna2...COUNT(*) FROM tabela GROUP BY coluna2; -> CONSIDERANDO PORTANTO QUE TEMOS OS INDICES
+IGUAIS NA COLUNA2 
+
+
+
+
+Separando resultados com LIKE, ou com aspectos singulares
+
+SELECT coluna FROM tabela WHERE coluna LIKE '%o que você quer%';
+
+
+GROUP BY ->agrega linhas similares em uma unica linha.,ou seja,se eu tenho mais de um valor de referência
+ele seleciona apenas um de cada e forma uma unica linha
+
+Para agregar valores iguais de linhas iguais pode ser usado também junto com o SUM(ValorX...)
+
+
+SELECT coluna1,coluna2... FROM tabela GROUP BY coluna2...;
+
+/*/*/*/ DADO IMPORTANTE /*/*/*/*
+Observe que muitas vezes o agrupamento pode ser falso de fato e a query rodar.
+Porque isso acontece? porque se você fizer a referencia por uma coluna que tem dados iguais e em outra coluna os dados diferentes
+em termos de linha o dado é diferente mas em coluna não, mas o GROUP BY pega esses dados e agrupa  A solução portando é definir o GROUP BY de maneira composta com duas colunas.
+
+EX: SELECT coluna2,coluna1...,COUNT(*) FROM tabela GROUP BY coluna1,coluna2; FIQUE ATENTO COM O COUNT ELE ESTÁ CONTANTO A SAIDA NÃO NA ENTRADA POR ISSO TÁ DEPOIS DAS COLUNAS.
+
+/*/*/* MINIMO E MÁXIMO /*/*/*/*/
+
+É possível filtrar direto pelo valor mínimo e máximo de uma coluna
+**//** Obs ele admite só um argumento no parâmetro
+SELECT MIN(coluna) FROM tabela;
+SELECT MAX(coluna) FROM tabela;
+**//**//** Mais de um argumento é necessário criar novamente a estrutura
+
+SELECT MAX(coluna1),MAX(coluna2),... FROM tabela;
+
+ ----------     Questão IMPORTANTE      ------------
+ 
+ È possivel encadear duas querys e achar o mínimo e o máximo, porém esse mesmo trabalho pode ser feito
+ com ORDER BY coluna ASC ou DESC que também vai mostrar o menor e o maior em ordenamento
+ na sua tabela, veja o exemplo abaixo.
+ 
+ SELECT coluna1,coluna2 FROM tabela WHERE coluna = (SELECT MAX(coluna) FROM tabela);
+ 
+ Essa query acima é também possível de ser feita com o mesmo resultado usando ORDER BY
+ 
+ SELECT coluna1,coluna2 FROM tabela ORDER BY coluna LIMIT 1 ASC; ou DESC se for o maior pro menor
+ 
+ 
+ O interessante é usar o MIN e o MAX junto com o GROUP BY dai é possivel obter os minimos e máximos da combinação de uma ou mais colunas
+ 
+ SELECT CONCAT(coluna1,coluna2),AS 'nome' Max(coluna3) FROM tabela GROUP BY coluna2,coluna1;
+ 
+ 
+ /********************** SOMA ******************/
+ 
+ 
+ SELECT SUM(colunaX) FROM tabela;
+ 
+Irá somar todos os valores das linhas da coluna X **OBSERVE - só colunas com valores numéricos,Assim como o MAX e o MIN é aceito apenas um parâmetro em cada função
+   
+   
+   
+/*********************** AVERAGE *************************/
+
+
+AVG ou a média, soma e divide pelo nº de elementos
+
+SELECT AVG(coluna) FROM tabela. -> IMPORTANTE aceita apenas um argumento no parâmetro
+
+
+
+/****************** TIPOS DE CARACTERES ************
+
+o Tipo VARCHAR quer dizer variable caracter ou seja, Tem um tamanho que não vai truncar os valores na tabela o tipo CHAR é limitado a 4 bytes ou 4 caracteres, valores maiores ele pode truncar, INDEPENDE DO INDICE NA DECLARAÇÃO DO TIPO então se você malandro declarar CHAR(10)não vai rolar.
+Se declarar também o tipo VARCHAR(10)ele também vai truncar mas o VARCHAR ACEITA mais valores NCHAR É UNICODE - VER OS TIPOS DO SQL SERVER - evita quebramento do dado na apresentação
+
+
+o Tipo INT que é o numerico aceita um grande valor também observer essa situação: DECIMAL(5,2) ou seja - aceita um numero máximo de 999.99 
+5 digitos e dois digitos depois da vírgula portanto se eu tentar fazer um INSERT INTO tabela(valor1...) VALUES (78454212487) O Erro não vai dar zero mas sim o máximo estabelecido no parâmetro que é 999.99
+
+
+o Tipo DECIMAL É fixo para cálculos (10,2) ou seja 10 digitos antes da virgula e dois digitos depois da virgula.
+o Tipo FLOAT E DOUBLE são para aproximações. Pouco espaço numeros grandes
+
+/********** DATE TYPES **********/
+
+date
+dateTime
+time
+o primeiro é da data, do tipo yyyy-mm-dd
+o Terceiro é horário do tipo hh:mm:ss
+e o segundo é a junção dos dois.
+
+Ex:
+
+INSERT INTO coluna(valor1) VALUES ('2015-10-02'); ***> Lembre-se, data é string
+INSERT INTO coluna(valor2) VALUES ('12:05:35');***> hora também é string lembre-se dos dois pontos
+INSERT INTO coluna(valor3) VALUES ('2015-10-02 espaço 12:05:35'); // 
+ -> lEMBRANDO QUE A DATA E HORA É SEPARADA POR UM TRAÇO MAS QUANDO APARECE NA TABELA ELE CORRIGE COM OS DOIS PONTINHOS 
+
+CURDATE(); Data atual
+CURTIME(); horario atual
+NOW(); data e horário atual
+
+-> A UTILIDADE DESSES COMANDOS É FEITA NA HORA DE INSERIR ALGUM DADO DO QUAL SEJA NECESSÁRIO GRAVAR A DATA E A HORA DE INSERÇÃO
+
+Ex: INSERT INTO tabela(valor1,valor2...) VALUES ("NOMEXEMPLO",CURDATE(),CURTIME,NOW());
+***obs os dados current depende do ajusto do sistema do local
+
+
+/*********** Conversão de Data *******************/
+
+Veja a documentação do Mysql mas basicamente é separar apenas o que interessa na data ou exibir de uma outra forma.
+
+SELECT coluna1,DAYNAME(coluna2) FROM tabela; - nesse caso ele retorna o valor da data da coluna1 como sendo dia da semana em string
+SELECT coluna2,YEAR(coluna2) FROM tabela; - nesse caso ele retorna o valor do ano apenas da data completa da coluna2
+
+Existem muitos outros tipos de formatação na documentação oficial
+
+DAY()
+YEAR()
+DAYOFWEEK()
+e por ai vai...
+
+Outro exemplo muito usado.
+SELECT DATE_FORMAT('1965-02-12 05:00:15' , '%D-%M-%Y'); cuja a saida será
+
+12th-February-1965
+
+OU seja, formatei a data para dia mês e ano, sendo a padrão ano mes e dia
+   
+ 
+
+
+Se eu quiser tabular assim
+
+12th/February/1965
+
+SELECT DATE_FORMAT('1965-02-12 05:00:15' , '%D/%M/%Y');
+
+OU MELHOR AINDA ASSIM 12/02/1965
+
+SELECT DATE_FORMAT('1965-02-12 05:00:15' , '%d/%m/%y'); BASTA MUDAR A FONTE PARA LOWER CASE
+
+
+/************ OPERAÇÕES COM DATAS (MATH DATE) ******************/
+
+
+DATEDIFF
+Pega uma data e compara com outra data,a saída é o número de dias desde a primeira data até a segunda.
+
+SELECT DATEDIFF(NOW(),dataInicial) FROM tabela;
+
+explicando = ele pega a data atual e subtrai da data inicial e tem o número de dias.
+
+
+
+/****************** TIME STAMPS **********************/
+
+A DIFERENÇA DO TIME STAMPS PRO DATETIME É QUE O TIMESTAMPS VAI DE 1970 ATE 2038 já o DATETIME VAI DE 0000 ATÉ 9999.
+
+é possivel montar uma query que atualiza a cada vez que inserimos um novo dado
+
+CREATE TABLE tabela(valor1 varchar(100),CREATE_AT TIMESTAMP DEFAULT NOW());
+
+OU SEJA - - toda vez que inserirmos um valor1, o timestamp irá incluir uma data e hora atual em uma coluna.
+
+agora iremos usar o UPDATE toda vez que inserir valores novos na tabela e também UPDATE DA HORA
+
+CREATE TABLE tabela(valor1,CREATE_AT TIMESTAMP DEFAULT NOW() ON UPDATE CURRENT_TIMESTAMP );
+
+** OBSERVAÇÃO: O CASO ACIMA É ESPECIFICO PARA ATUALIZAR A DATA E A HORA TODA VEZ QUE INSERIRMOS UM VALOR NOVO
+EX: PONTO ELETRÔNICO USA ISSO
+
+⇒ Dissecando a query.
+
+criei uma tabela, inserir um valor apenas, depois criei uma coluna default com a hora corrente, e quando executado o UPDATE desse
+mesmo valor O VALOR ATUAL DA HORA TAMBÉM É ATUALIZADO
+
+ex: UPDATE tabela SET valor1 = 'novoValor' WHERE valor1 = 'valorAntigo';
+
+portanto todas as vezes que for atualizar um valor ela vai disparar essa mudança;
+
+
+/***************** OPERADORES LÓGICOS ************************/
+
+
+!= -> DIFERENTE ou seja,tudo menos o que for declarado
+NOT LIKE -> Também é um excludente ou seja, tudo menos o que for declarado
+
+> maior que - tudo maior que o declarado
+< menor que 
+>= maior igual - inclui o declarado e tudo maior que ele
+=< menor igual
+
+Tipicamente trabalhado com números 
+
+RETORNO BOLEANO
+
+EX: SELECT 99 > 1; saida é  TRUE ou 1
+SELECT 50 < 5; SAÍDA É 0 ou FALSE
+
+Comparação entre STRINGS
+
+a > A = FALSE Porque o maior nesse caso é o a
+a = A = True porque para o mysql não importa o case da fonte
+
+&& = ou AND juntar ou somar duas informações, sendo as duas verdadeiras = 1 
+uma sendo falsa  = 0
+
+|| or uma declaração sendo verdadeira, tdo é verdadeiro.
+
+
+Em todos os casos a saída será o que for verdadeiro
+
+
+/**************** BETWEEN ************************/
+
+Ou delta,é o intervalo entre dois valores
+Essa é outra maneira de encontrar o intervalo entre dois valores
+SELECT coluna1,coluna2... FROM tabela WHERE coluna2 > valor1 BETWEEN coluna2 < valor2;
+
+A sintaxe do Between é a seguinte
+
+BETWEEN valorX AND valorY;
+
+NOT BETWEEN - já faz o oposto do between ou seja, compreende o espaço fora do intervalo
+tudo que estiver FORA DO INTERVALO É O QUE IRÁ SER RETORNADO
+
+SELECT coluna1,coluna2... FROM tabela WHERE coluna2 > valor1 NOT BETWEEN coluna2 < valor2;
+
+CAST() forçar a conversão com Data
+
+O BETWEEN USADO ENTRE DATAS É ACONSELHAVEL USO DO CAST PRA NÃO CAUSAR POSSSÍVEIS ERROS DE CONVERSÃO
+
+EX:
+
+SELECT coluna1,coluna2... FROM tabela WHERE coluna2 CAST('1980-01-02') BETWEEN coluna2 CAST('1999-02-01');
+
+/****************** IN **************************//
+
+Primeiramente é possível usar o OR como termo aglutinador da sentença
+
+EX: SELECT coluna1,coluna2... FROM tabela  WHERE coluna1 = 'valorX' OR coluna1 = 'valorY' OR coluna1 = 'valorZ'...;
+
+OU seja o meu retorno dessa query será uma busca pela coluna cujo valor exista na condição de igual ou
+outro valor nessa mesma coluna que exista numa condição igual a tal, como foi definido e assim indefinidamente.
+
+
+PORÉM COM A DECLARAÇÃO  - IN - fica muito menor
+
+SELECT coluna1,coluna2... FROM tabela  WHERE coluna1 IN ('valorX','valorY','valorZ'...); e acomoda
+também valores numéricos ou strings.
+
+
+/ ******************* NOT IN ****************/ 
+
+É possível também usar o not in ou seja, buscar tudo que seja diferente da declaração
+que também poderia ser feito dessa maneira 
+
+SELECT coluna1,coluna2... FROM tabela WHERE coluna2 != valorX AND coluna2 != valorY AND ...;
+ou seja,tudo que for diferente vai ser retornado, porém surge o not in
+
+SELECT coluna1,coluna2... FROM tabela WHERE coluna2 NOT IN (valorX,valorY,valozZ...);
+⇨ Muito mais sintético.
+
+
+ainda é possível usar mais clausulas do tipo ORDER BY, >= no WHERE entre outras...São inumeras possibilidades 
+
+SELECT coluna1,coluna2  FROM tabela WHERE coluna1 >= valorQ AND coluna1 NOT IN(valorX,valorY,valorZ...);
+
+
+/******************* MÓDULO **********************/             
+
+Também é possível filtrar usando módulo na coluna QUE for INT 
+
+
+SELECT coluna1,coluna3... FROM tabela WHERE coluna3 % 3 != 0; --> poderia ser o módulo de outro divisor sem problema.
+
+isso significa dizer que todos os valores dividos por 3 cujo o resto é diferente de zero irão retornar
+na query
+
+/*************** CASE STATEMENTS *****************/
+
+Estruturas de Decisão
+
+CASE WHEM THEN ELSE END AS
+
+SELECT coluna1,coluna2...,CASE WHEN coluna1 (condição > < = != o que for) THEN valorX ELSE valorY END (ACONSELHAVEL USAR O ALIAS) FROM tabela;
+
+Observe que o CASE abre a DECLARAÇãO e o END finaliza
+
+******IMPORTANTE**********
+Não é necessário criar a coluna,o que a condição faz é gerar uma coluna a partir da saída que você
+declarou que existisse, por exemplo
+
+SELECT coluna1,coluna2,
+        CASE 
+        WHEN coluna2 BETWEEN 0 AND 50 THEN '*'
+        WHEN coluna2 BETWEEN 51 AND 100 THEN '**'
+        WHEN coluna2 BETWEEN 101 AND 150 THEN '***'
+        ELSE 'Full'
+END AS 'Estoque' FROM Tabela;
+
+O acontece aqui é que coloquei uma condição de modo que se algo tem uma certa quantidade, gere uma coluna 'Estoque' 
+cuja a saída é relativa a quantidade de coisas do estoque e atribui uma legenda '*' para o estoque
+
+Nesse caso também é possível outras configurações a depender da lógica.
+
+/*************** JOINS E RELACIONAMENTOS ****************/
+
+
+1 - 1 
+1 - N
+N - N
+
+ - > VER TAMBÉM
+ Associação
+ Agregação
+ Generalização
+ Especialização
+ 
+/**** CRIANDO AS TABELAS COM FOREING KEYS* ****/
+ 
+ Resumindo chave estrangeira
+ 
+FOREING KEY(campoIDTabelaFilhaqueVaiPegardoPai) REFERENCES nomedaTabelaPai(id da tabela pai); 
+ 
+LEMBRANDO
+um chave estrangeira é uma COLUNA DE UMA TABELA, ou seja, ela ocupa uma coluna da tabela filha que faz referência a uma coluna da tabela PAI. 
+ 
+PORTANTO imagine que criamos uma tabela qualquer
+ 
+ TABELA PAI SUPER;
+ 
+ CREATE TABLE cliente(
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    telefone INT NOT NULL,
+    cpf INT NOT NULL,
+    email VARCHAR(100) NOT NULL,
+);
+ 
+TABELA FILHA;
+
+CREATE TABLE pedido(
+    id INT AUTO_INCREMENT PRIMARY,
+    preco DECIMAL(10,2) NOT NULL,
+    dataPedido DATE NOT NULL,
+    nomeProduto VARCHAR(100) NOT NULL,
+    **** COLUNA CONSTRAINT - lembrado,ela precisa ser do mesmo tipo da do pai ****
+    id_cliente INT, 
+    **** AGORA A REFERENCIA a foreing key******
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id);
+    
+);
+
+*********************IMPORTATE ********************** 
+
+SE DEFINIRMOS UMA CHAVE ENTÃO NÃO PODEREMOS DELETAR NADA DA TABELA PAI SEM ANTES DELETAR A TABELA FILHA PORVETURA SE PRECISARMOS DELETAR ALGO É CONVENIENTE NA CRIAÇÃO DA TABELA FAZER A SEGUINTE DECLARAÇÃO
+
+ON DELETE CASCADE
+
+ISSO QUER DIZER QUER,SE NA TABELA PAI EU DELETAR UM VALOR TAMBÉM O VALOR CORRESPONDENTE NA TABELA FILHA
+SERÁ DELETADO, ISSO EVITA QUE EXISTAM VALORES SEM REFERENCIA 
+
+PORTANDO A DECLARAÇÃO APROPRIADA É A SEGUINTE
+
+CREATE TABLE pedido(
+    id INT AUTO_INCREMENT PRIMARY,
+    preco DECIMAL(10,2) NOT NULL,
+    dataPedido DATE NOT NULL,
+    nomeProduto VARCHAR(100) NOT NULL,
+    **** COLUNA CONSTRAINT - lembrado,ela precisa ser do mesmo tipo da do pai ****
+    id_cliente INT, 
+    **** AGORA A REFERENCIA a foreing key******
+    ON DELETE CASCADE
+);
+
+
+
+ ========== FULL JOIN ============= 
+ 
+ Retornar todos os dados mesmo relacionados ou não das duas tabelas
+ 
+SELECT column_name(s)
+FROM table1
+FULL OUTER JOIN table2 ON table1.column_name = table2.column_name;
+
+ **** IMPORTANTE 
+ 
+ O resultado pode mostrar todos os dados, se a database for grande pode travar tudo
+
+
+
+
+******************* SUB QUERYES ******************
+
+Sub queries é quando eu tenho uma querye e fazendo um hard code no WHERE eu vou agrupando mais comandos
+
+EX: 
+
+SELECT * FROM tabela WHERE coluna1  = (SELECT coluna1 FROM tabela ORDER BY ou WHERE ... =  coluna2);
+Resumindo, é possível criar queryes dentro de queryies aninhadas de muitas formaas.
+
+/******* IMPORTANTE *************/
+
+Quando eu preciso especificar um valor de qual coluna ele procede eu devo declarar dessa maneira
+
+SELECT coluna1 FROM tabela WHERE tabela.coluna1 = tabela2.coluna1;
+
+ou seja tabela.(ponto)valor ou campo.
+
+
+Em duas tabelas A e B a interceção entre essas tabelas é o join ou seja os valores comums de ambas 
+as tabelas é a junção dessas tabelas mais conhecido comom INNER JOINS
+A razão para esse fenômeno é muito simples. Os valores da Tabela A na coluna da chave primaria DEVEM
+ser os mesmo na CHAVE ESTRANGEIRA ou seja não é junção dos valores comuns e sim que os valores da 
+tabela CONTENDO A PRIMARY KEY DEVEM SER OS DA TABELA PAI NA TABELA FILHA
+
+
+PORTANTO
+
+SELECT * FROM tabela1 JOIN tabela2 ON colunaIDdaTabela1  =  colunaID da Tabela1 daTabela2;
+
+ou especificando mais ainda os valores ou join explicit
+
+SELECT valorA,valorB,valorC... FROM tabela1
+       JOIN
+            tabela2 
+                    ON
+                        tabela.valorA = tabela2.valorAdaTabela2;
+
+
+********** IMPORTANTE ***********
+Na criação do ID da tabela quando existirem ID´s declarados iguais em tabelas diferentes 
+na hora de montar a query voce tem que usar tabela.valor porque senão fica ambiguo e ele não
+vai saber se você está chamando o id da primeira tabela ou da segunda tabela.
+
+Também é preciso lembra que fazer o JOIN de duas tabelas é o mesmo que retornar 
+o id da tabela PAI a sua primary key COM A COLUNA DA CHAVE ESTRANGEIRA DA SEGUNDA TABELA
+no caso a que criamos para receber a referencia da primeira tabela.OU SEJA ESTAREI COMPARADO DUAS COISAS IGUAIS 
+e não a chave indetificadora de uma tabela com a chave identificadora de outra.
+
+EX SELECT * FROM  cliente 
+    JOIN pedido ON cliente.id = pedido.id_cliente;
+
+Jeito errado
+SELECT * FROM  cliente 
+    JOIN pedido ON cliente.id = pedido.id;
+    
+    ** TAMBÉM PODEMOS USAR GROUP BY OU ORDER BY PARA APRESENTAR ELEMENTOS NA ORDEM QUE  QUISERMOS
+    SELECT * FROM  cliente 
+    JOIN pedido ON cliente.id = pedido.id GROUP BY valorA ... ORDER BY valorB DESC ASC;
+    
+    
+    INNER JOIN = INTERCEÇÃO ou seja só os valores comuns entre os dois
+    
+    SELECT * FROM  cliente 
+    INNER JOIN pedido ON cliente.id = pedido.id_cliente;
+    
+    Quando declarados os valores em join VAI RETORNAR AMBOS OS VALORES DE A E B
+    no inner join somente os valores onde as chaves fazem referencia aos dois ao mesmo tempo
+    
+    
+/********************* LEFT JOIN **********************/
+
+Tudo que contém em A + Interceção com B 
+
+
+SELECT * FROM  cliente 
+    LEFT JOIN pedido ON cliente.id = pedido.id;
+    
+    
+No LEFT JOIN  o retorno são todos os valores de A + os valores comuns em B ou seja
+qualquer valor que não seja completo nesse sentido não volta, no caso de tabela
+
+ex: SELECT valorA,valorB FROM tabelaA LEFT JOINT  tabelaB  ON  tabelaA.valorA = tabelaB.valorIdB GROUP BY tabelaA.valorA;
+
+Sendo portanto agrupamento pelo id da Tabela A.
+
+Porém se eu fizer o agrupamento pela chave estrangeira da tabelaB os valores que existirem em b não vão agrupar
+
+
+
+/********************** RIGHT JOIN ********************/
+
+
+TODOS OS VALORES DE B + INTERCEÇÃO COM A
+
+Ex: SELECT * FROM tabelaA 
+    RIGTH JOIN tabelaB ON tabelaA.valor1 = tabelaB.valorB;
+    
+    
+    
+/*********************MANY TO MANY ******************/
+
+Nesse caso, hora de criar as tabelas, mais relações são criadas entre elas, não necessáriamente de 
+
+1->N considerando uma tabela pra outra. Uma vez que mais de uma relação de uma pra outras e de outras pra uma
+
+*** importante ****
+
+NÃO IMPORTA SE USA INNER JOIN RIGTH JOIN LEFT JOIN
+observe a ordem na hora de juntar as tabelas considerando a declaração, e não apenas qual join vai usar ISSO TEM UMA RELAÇÃO COM O DIAGRAMA DE VENN ou A LÓGICA DOS CONJUNTOS
+
+é importante entender o agrupamento do ponto de vista dos conjuntos e das tabelas com seus valores
+
+
+SELECT valor1,valor2,valor3... FROM tabela A INNER JOIN tabelaB ON tabelaA.idTabelaA = tabelaB.idTabelaB GROUP BY ou ORDER BY...;
+
+
+
+IMPORTANTE
+
+Valores iguais podem ser agrupados, considerando que uma tabela pode ter mais valores que outras
+quando na hora de juntar.
+
+Quando existem valores comuns o JOIN Regular junta as interceptações, e geralmente repete os valores excedentes em outras
+isso acontece porque a tabela sempre precisar preencher valores, sempre retonar completa, ou seja sempre volta identidade:
+
+LEFT JOIN retorna tudo que tem na tabela A e inclusive o que não tem em B ou seja A apenas
+
+
+/************ JOIN COM MAIS DE UMA TABELA *****************/
+
+SELECT * FROM tabelaA JOIN tabelaB ON tabelaA.id = tabelaB.id 
+        JOIN tabelaC ON tabelaA.id = tabelaC.id;
+        
+Observe que para haver mais de um join precisa haver relação entre mais de uma tabela
+no caso da tabela A duas chaves fazem referência nela,por isso é possível fazer
+agrupamento por meio do join.
+
+
+
+Ver exercicios com ig_clone e demais de join
+
+
+/******************************* NODEJS *********************************************/
+
+
+Ver na outra Workspace
+
+
+/************************ TRIGGERS *****************/
+
+Syntax
+
+CREATE TRIGGER nomedoTrigger,TempodoTrigger,eventodoTrigger, ON nomedaTabela 
+    FOR EACH ROW 
+        BEGIN
+        ...
+            END;
+            
+TEMPO DO TRIGGER
+
+BEFORE
+AFTER
+
+Evento do TRIGGER
+
+INSERT 
+UPDATE
+DELETE
+
+ON 
+
+nome da tabela 
+qualquer tabela ou uma tabela qualquer
+
+
+Observe o seguinte exemplo:
+
+
+DELIMITER $$
+
+CREATE TRIGGER must_be_adult
+     BEFORE INSERT ON users FOR EACH ROW
+     BEGIN
+          IF NEW.age < 18
+          THEN
+              SIGNAL SQLSTATE '45000'
+                    SET MESSAGE_TEXT = 'Must be an adult!';
+          END IF;
+     END;
+$$
+
+DELIMITER ;
+
+Explicando
+
+NEW.age é um placehold para se inserir um novo, OU SEJA 
+estou dizendo que irei supostamente inserir um novo dado.linha que irei inserir o dado
+
+EX: IF NEW.follower_id = NEW.following_id
+
+Se Nova inserção de uma linha = nova inserção de outra linha 
+
+
+ SIGNAL SQLSTATE '45000'
+ 
+ quando preciso retornar uma situação não esperada no banco, preciso criar o disparo disso que é o erro
+ nesse caso '45000' faz referência a um erro 'generico' que os desenvolvedores usam
+ observe que se tentar criar,excluir...qualquer coisa no banco que esteja fora da condição ele retorna 
+ um erro, portanto o trigger faz basicamente o mesmo comportamento
+ e sendo assim precisamos definir o SIGNAL SQLSTATE '45000'
+ VERIFIQUE NA DOCUMENTAÇÃO OUTROS ERROS ESPECIFICOS QUE VOCÊ QUEIRA RETORNAR
+
+
+DELIMITER $$
+
+$$ SUBSTITUI O ;
+
+NO CASO usado do DELIMITER ele colocou apenas para delimitar o bloco do trigger
+
+/************************ TOOLS E WARNINGS DO TRIGGER *****************************/
+
+PAra saber quais os triggers da sua database
+
+$ SHOW TRIGGERS ;
+
+Remover um trigger
+
+$DROP TRIGGER nome do trigger;
+
+boa prática de triggers SEMPRE USE AVISOS
+TRIGGER SEM AVISO CAGA TUDO SE RODAR
+
+o PROPRIO uso de triggers deve ser bem analisado porque é algo que roda "behind the scenes"
+ou  seja,pode criar situações e modificações sem controle ou mesmo controladas mas que com o passar
+do tempo acabam gerando problemas.
+   
+    
+/* DQL - GRANT REVOKE DENY                 */
+
+
+/*********************Permissões*****************/
+SHOW GRANTS;	
+Mostra permissões de uso 
+
+
+
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
