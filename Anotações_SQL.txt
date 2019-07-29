@@ -8,6 +8,29 @@ Mysql -u admin
 Se tiver password
 Mysql -u admin -p root
 
+Criando uma Senha 
+
+mysql -u root password novasenha
+
+Também é possível alterar as senhas dos usuários fazendo um update na tabela mysql.user, conforme exemplo abaixo:
+
+Acesse o banco de dados MySQL com o usuário root:
+$ mysql -uroot -p
+
+Use o database mysql:
+mysql> use mysql;
+
+Altere a senha do usuário desejado:
+mysql> update user set password=PASSWORD("NOVASENHA") where User='usuario';
+
+Valide a alteração:
+mysql> flush privileges;
+
+Setando Direto no acesso:
+
+SET PASSWORD FOR 'usuario'@'localhost' = PASSWORD('Senha123');
+
+
 Para executar um arquivo externo ou dump, basta entrar com
 
 source nomedoArquivo.sql
