@@ -1,0 +1,90 @@
+-- exercicio 01
+
+
+CREATE TABLE PROJETO(
+	CODIGO_PROJETO NUMBER(5) CONSTRAINT PK_PROJETO PRIMARY KEY,  
+	NOME_PROJETO VARCHAR2(15) NOT NULL,
+	DATA_INICIO DATE NOT NULL,
+	DATA_FIM DATE NOT NULL)
+	TABLESPACE USERS;
+
+-- desse modo defini uma pk_projeto sem associar com a chave código
+
+-- outra abordagem 
+	
+
+CREATE TABLE PROJETO(
+	CODIGO_PROJETO NUMBER(5),  
+	NOME_TAREFA VARCHAR2(15) NOT NULL,
+	DATA_INICIO DATE NOT NULL,
+	DATA_FIM DATE NOT NULL)
+	TABLESPACE USERS; -- não é necessário declarar sempre se o log in foi feito para essa tablespace
+
+** Adcionando a chave depois da criação da tabela 
+ALTER TABLE PROJETO ADD(CONSTRAINT PK_PROJETO PRIMARY KEY(CODIGO_PROJETO));
+
+-- NEXT TABLE
+
+CREATE TABLE TAREFA(
+	CODIGO_TAREFA NUMBER(5),  
+	NOME_TAREFA VARCHAR2(15) NOT NULL,
+	DATA_INICIO DATE NOT NULL,
+	DATA_FIM DATE NOT NULL)
+	TABLESPACE USERS;
+
+ALTER TABLE TAREFA ADD(CONSTRAINT PK_TAREFA PRIMARY KEY(CODIGO_TAREFA));
+
+
+--Adcionando uma validação no campo de data
+
+ALTER TABLE PROJETO ADD(CONSTRAINT CODIGO_PROJETO CHECK(DATA_INICIO > DATA_FIM)); -- A data inicial precisa ser maior que a final
+
+** lEMBRANDO QUE DEFINIMOS CODIGO_PROJETO COMO PK portatno precisamos 
+sempre reafirmar as restrições baseadas na chave primaria
+
+
+-- Adcionando Atributo e mais uma validação
+
+**ALTER TABLE PROJETO ADD(CADASTRO_ATIVO CHAR(1) DEFAULT 'A' CONSTRAINT CODIGO_PROJETO CHECK(CADASTRO_ATIVO IN('A','I'))); 
+
+***OBSERVE que se sempre que crio uma regra(restrição ou constraint)
+devo associar a uma coluna ou uma definição chave - o comando acima vai reclamar de um erro
+
+-- Corrigindo
+
+
+ALTER TABLE PROJETO ADD (CADASTRO_ATIVO CHAR(1) DEFAULT 'A' CONSTRAINT CK_ATIVO CHECK(CADASTRO_ATIVO IN ('A','I')));
+
+
+-- Criando a Relação entre as duas Tabelas
+-- Até aqui considero que a entidade fraca seria a tabela TAREFA
+
+ALTER TABLE TAREFA ADD(CONSTRAINT FK_TAREFA FOREIGN KEY(CODIGO_TAREFA)
+REFERENCES PROJETO(CODIGO_PROJETO)ON CASCADE DELETE);
+
+--Constraint nomeDaNovaColuna chavePrimariaTabelaFilha References TabelaPai(chavePrimariaTabelaPai) on cascade delete
+
+
+-- Modificando um Atributo
+ALTER TABLE PROJETO MODIFY(NOME_PROJETO VARCHAR2(50));
+
+-- Criando um auto_increment 
+
+CREATE SEQUENCE SEQ_TAREFA
+MINVALUE 1
+MAXVALUE 9999999999
+START WITH 1
+INCREMENT BY 1
+
+
+-- Dando Carga
+
+INSERT INTO PROJETO(CODIGO_PROJETO,NOME_PROJETO,DATA_INICIO,DATA_FIM,CADASTRO_ATIVO)
+VALUES(1,'Controle de Estoque',TO_DATE('01/06/2018','DD/MM/YYYY'),TO_DATE('01/05/2018','DD/MM/YYYY'),'A');
+
+-- TO_DATE JÁ CONVERTE A DATA PRA ENTRAR SEMPRE NO PADRÃO QUE EU QUERO
+
+
+INSERT INTO TAREFA(CODIGO_TAREFA,NOME_TAREFA,DATA_INICIO,DATA_FIM)
+VALUES(1,'Fazer Estoque',TO_DATE('01/06/2018','DD/MM/YYYY'),TO_DATE('01/05/2018','DD/MM/YYYY'));
+

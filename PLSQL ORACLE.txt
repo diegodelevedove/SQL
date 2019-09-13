@@ -1,0 +1,138 @@
+---------------- PL SQL / Oracle Database  ------------------------ 
+
+*-* download da versão express
+
+https://www.oracle.com/database/technologies/xe-downloads.html
+ou 
+
+https://www.oracle.com/br/database/technologies/appdev/xe.html
+
+Links importantes
+
+https://www.oracle.com/technetwork/pt/articles/database-performance/introducao-conceito-de-tablespaces-495850-ptb.html
+
+https://docs.oracle.com/cd/B25329_01/doc/admin.102/b25107/getstart.htm
+
+
+https://docs.oracle.com/cd/B25329_01/doc/appdev.102/b25108/xedev_sqlplus.htm#BJEIEGBF
+
+********************************************************************
+
+Depois da instalação do DB da oracle ele gera um endereço de administração via webbrowser
+
+https://localhost:5500/em
+ou porta defaul 16200
+
+Veja Link:
+https://www.oracle.com/technetwork/database/manageability/emx-intro-1965965.html
+
+
+Usando via terminal
+
+entre no cmd ou procure por SQLcmd.exe ou e digite
+
+> slqplus
+
+ele dá a versão da release e pede usuário e senha
+
+--- No caso de não lembrar ou não tiver setado um  PASSWORD E UM USER
+
+entre no usuário:
+
+informe usuário: sys as sysdba
+informe senha: aperte o enter
+
+-Pronto entramos na instância master do banco 
+
+Conectado a:
+Oracle Database 18c Express Edition Release 18.0.0.0.0 - Production
+Version 18.4.0.0.0
+
+SQL>
+
+
+Agora vamos alterar a senha:
+
+SQL > alter user novo_usuario indetified by nova_senha;
+
+ou 
+
+SQL > alter system indetified by nova_senha;
+
+POde conectar também como 
+
+SQL> Conn sys/senhas as sysdba
+
+*********** Dando carga A PARTIR DE UM arquivo.sql ******************
+
+SQL> @ C:\Users\Usuário\pasta...\nomedoArquivo.sql
+
+************* Consultando as Tablespaces ******************
+
+SELECT TABLESPACE_NAME FROM USER_TABLESPACES;
+
+- Importante ressaltar que no oracle não é o mesmo conceito de databases do mysql e do msserver
+Tablespaces é o armazenamento lógico de um grupo de tabelas e o físico é em um datafile que é compatível
+com o banco de dados do sistema operacional usado.
+
+- Primeiro é necessário criar uma tablespace que seria um grupo de tabelas ou espaço de tabelas
+
+- Depois uma tabela que conterá os dados dentro da tablespace
+- Uma database para o oracle é o conjunto maior e as tablespaces internamentes a ele
+
+
+-> Consultando os usuários de todas as Tablespaces
+
+SELECT USERNAME,DEFAULT_TABLESPACE FROM DBA_USERS;
+
+ESPECIFICANDO UMA TABLESPACE
+
+-> select USERNAME, DEFAULT_TABLESPACE from DBA_USERS where DEFAULT_TABLESPACE = 'DEV_DB';
+
+--> A estrutura interna das tabelas é considerada como seguimentos
+
+
+Dai vem a expressão DBA porque os grupos de tabelas são sempre
+associados com um login e senha ou seja, a um usuário que irá
+operar o banco.
+
+
+**Portanto,por enquanto,preocupe-se apenas em criar as tabelas e deixe que o banco se encarregue do controle das linhas
+
+
+*** Fazer Select definindo as colunas é melhor que select * from tabela;
+
+
+---------------- COMANDOS ------------------------
+***Vou colocar aqui só o que é importante ou que difere do mysql em geral
+
+
+describe ou desc nomeTabela; mostra a estrutura da tabela 
+
+
+********** Primary Key **************
+
+Para definir uma chave primaria é um pouco diferente do que era feito no mysql
+
+ex mysql:
+
+id_cliente int primary key auto_increment;
+
+no Oracle
+
+codigo_cliente number(10) constraint pk_cliente primary key,
+
+ou seja, a chave primaria é pk cliente e não código cliente.
+
+
+	
+
+
+
+
+
+
+
+
+
+
