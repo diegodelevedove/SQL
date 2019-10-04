@@ -1,0 +1,364 @@
+/*********** MS SQL SERVER VIA TERMINAL **************/
+
+com o servidor instalado e iniciado
+entre no terminal via cmd 
+digite 
+
+sqlcmd
+Se o terminal apontar 1> significa que CONECTAMOS NO LOCALHOST e podemmos executar os comandos necessários
+
+1> 
+
+** Se você definiou alguma autenticação a maneira certa de iniciar é entrando com os parâmetros
+
+sqlcmd -S myServer\instanceName\SQLEXPRESS -U nomeDoUsuário -P senha
+
+***Lembrando(servidores sql trabalham como uma única instância(oracle,ms server) que significar dizer que 
+para cada usuário terei uma instância do banco
+
+********* criando um backup ************
+Backup database TestDB to disk = 'D:\testdb_full.bak'
+GO
+Backup log TestDB to disk = 'D:\testdb_log.trn'
+
+******** restaurando de um arquivo e ou movendo backup **************
+
+Restore database TestDB from disk = 'D:\TestDB_full.bak'
+with move 'TestDB' to 'D:\DATA\TestDB_DR.mdf',
+move 'TestDB_log' to 'D:\DATA\TestDB_log_DR.ldf',
+norecovery
+GO
+Restore database TestDB from disk = 'D:\TestDB_log.trn' with norecovery
+
+
+/******** Verificando e Definindo as bases de dados *********/
+
+SELECT 	DB_NAME()
+GO
+
+**O go fecha a linha de código e também mostra a base de dados corrente seleciona a base de dados default 
+vai aparecer assim
+
+1>-------------
+master
+**a instância acima é a principal
+
+********* criar um usuário *****************
+ex:
+create user fulano for login senha
+
+isso deve ser feito sem estar em use database alguma.
+
+/***** Listar as Databases
+
+select name from sys.databases;
+go
+
+
+/********* Listar Campos *************
+
+Pra conferir se a tabela foi criada entre com:
+
+exec sp_columns nomedaTabela
+go
+
+ou 
+
+select * from sys.tables
+go
+
+ou 
+
+select * from information_schema.tables
+go
+
+/********* Drop Databases
+
+*importante = mude para outra database se a database que você quer deletar é a base de dados corrente
+
+use outraDatabase
+
+DROP database [nomeDaDatabase] -- Use as chaves mesmo
+Go
+*** Verifique se foi dropada
+
+exec sp_columns nomeDatabela
+go
+
+-- Dropando a database pelo cmd sem entra no server
+
+sqlcmd -S .\SQLEXPRESS -q drop database [nomedaDatabase]
+
+
+-------------- Parte Prática --------------------
+CREATE DATABASE nomeDaDatabase
+go
+use nomeDatabase
+go
+
+
+**************** SQL PRÁTICO **********************
+
+----- criando as tabelas ----------
+
+*** LEMBRAR DE SEMPRE USAR O GO
+
+CREATE TABLE CUSTOMERS( 
+   ID   INT              NOT NULL, 
+   NAME VARCHAR (20)     NOT NULL, 
+   AGE  INT              NOT NULL, 
+   ADDRESS  CHAR (25) , 
+   SALARY   DECIMAL (18, 2),        
+   PRIMARY KEY (ID));
+GO
+
+-- Quando uma instrução é inserida com sucesso ele volta pra linha de contexto 1
+1>
+
+****** Selecionano todos os registros da tabela
+
+1>SELECT * FROM CUSTOMERS; -- NÃO PRECISO FECHAR O COMANDO MAS PRECISA DO GO
+2>GO
+--lEMBRAR DO GO
+
+----- INSERT --------
+
+INSERT INTO TABLE_NAME [(column1, column2, column3,...columnN)]   
+VALUES (value1, value2, value3,...valueN)
+
+Dando carga
+
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (1, 'Ramesh', 32, 'Ahmedabad', 2000.00 );
+  
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (2, 'Khilan', 25, 'Delhi', 1500.00 );  
+
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (3, 'kaushik', 23, 'Kota', 2000.00 );  
+
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (4, 'Chaitali', 25, 'Mumbai', 6500.00 ); 
+ 
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (5, 'Hardik', 27, 'Bhopal', 8500.00 );  
+
+INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY) 
+VALUES (6, 'Komal', 22, 'MP', 4500.00 );
+
+
+ou POde também entrar com valores diretamente como abaixo
+
+INSERT INTO CUSTOMERS VALUES (7, 'Muffy', 24, 'Indore', 10000.00 );
+
+-------- POPULANDO UMA TABELA COM OUTRA TABELA --------------------
+
+INSERT INTO nomePrimeiraTabela
+   SELECT column1, column2, ...columnN  
+      FROM nomeSegundaTabela 
+      [WHERE condition];
+
+
+----- SELECT ----------
+
+SELECT * FROM table_name
+GO
+
+------- UPDATE -----------
+
+UPDATE table_name 
+SET column1 = value1, column2 = value2...., columnN = valueN 
+WHERE [condition];
+
+Ex: UPDATE CUSTOMERS SET NAME = "Ranesh OSHO" where SALARY = 2000
+GO
+
+-------- DELETE -------------
+
+DELETE FROM CUSTOMERS WHERE ID = 4
+GO
+
+* delete na tabela inteira
+
+DELETE FROM CUSTOMERS
+GO
+
+
+-------- WHERE --------------
+SELECT column1, column2, columnN  
+FROM table_name 
+WHERE [condition]
+
+ex:
+SELECT NAME from CUSTOMERS where SALARY = 2000
+GO
+
+SELECT NAME,AGE from CUSTOMERS where AGE = 22 and Name = "Komal"
+go
+
+
+------ like ------------------------
+
+Especificar busca, antes,depois,com ou sem os valores...
+Lembre-se das aspas ''
+
+começar com = like 'valor%'
+terminar com = like '%valor'
+qualquer valor = like '%valor%'
+
+valores que começam com algum valor específico com 3 caracteres = 'valor_%_%'
+
+ex:SELECT * FROM CUSTOMERS WHERE SALARY LIKE '200%'
+GO
+
+
+-------- ORDER BY -----------------
+Ordenar por
+
+SELECT column-list  
+FROM table_name  
+[WHERE condition]  
+[ORDER BY column1, column2, .. columnN] [ASC | DESC];
+
+EX: 
+SELECT * FROM CUSTOMERS ORDER BY ADDRESS ASC
+GO
+
+-------- GROUP BY ------------------------
+Agrupar coluna por 
+
+SELECT column1, column2 
+FROM table_name 
+WHERE [ conditions ] 
+GROUP BY column1, column2 
+ORDER BY column1, column2 
+
+EX:
+SELECT NAME,SUM(SALARY) AS "Soma dos Salários" from CUSTOMERS GROUP BY NAME
+GO
+
+
+---------- DISTINCT --------------------
+retorna todos os resultados únicos, exclui os duplicados,usado com select
+
+SELECT DISTINCT column1, column2,.....columnN  
+FROM table_name 
+WHERE [condition] 
+
+EX:
+
+SELECT DISTINCT NAME,SALARY FROM CUSTOMERS
+GO
+
+---------- JOIN ----------------------
+
+Vamos criar outra tabela e juntar as duas
+
+CREATE TABLE ORDERS( 
+   OID INT NOT NULL, 
+   PRODUCT TEXT  NOT NULL,	
+   PRICE DECIMAL(10,2)   NOT NULL,	
+   CLIENT_ID INT,	 
+   FOREIGN KEY(CLIENT_ID) REFERENCES CUSTOMERS(ID),        
+   PRIMARY KEY(OID)
+)
+GO
+
+Carga
+
+INSERT INTO ORDERS(OID,PRODUCT,PRICE) 
+VALUES(01,"CHAIR",50.00),
+(02,"KNIFE",10.00),
+(03,"CACHAÇA",12.30),
+(04,"PORN_MOVIE",20.05),
+(05,"BONECA_INFLÁVEL",299.90),
+(06,"FUZIL_AK47",1050.12)
+GO
+
+
+-- jOIN - JUNTANDO DUAS TABELAS COM AS COLUNAS QUE DEFINIMOS
+
+
+SELECT ID,NAME,AGE,PRICE,PRODUCT FROM CUSTOMERS, ORDERS WHERE CUSTOMERS.ID = OID
+GO
+
+OUTRA ABORDAGEM
+
+SELECT A.ID, A.NAME, A.AGE , B.PRODUCT FROM CUSTOMERS A INNER JOIN ORDERS B ON A.ID = B.CUSTOMERS.ID
+GO
+
+TIPOS DE JOIN
+
+INNER JOIN = RETORNA A MESMA QUANTIDADE DE LINHAS DE AMBAS TABELAS
+LEFT JOIN = RETORNA O QUE TEM NA TABELA "A" MESMO NÃO TENDO VALOR EM "B"
+RIGTH JOIN =  RETORNA O QUE TEM NA TABELA "B" MESMO NÃO TENDO VALOR EM "A"
+FULL JOIN = RETORNA TODAS AS LINHAS QUE COMBINAM EM AMBAS TABELAS
+SELF JOIN = JUNTAR A TABELA COM ELA MESMA RENOMEANDO A SEGUNDA CÓPIA COMO SE FOSSE O MERGE
+CARTESIAN JOIN = RETORNA UM PRODUTO CARTESIANO DOS DADOS DE DUAS OU MAIS TABELAS
+
+
+
+----------- SubQueryes -------------------
+Syntax basica
+
+SELECT column_name [, column_name ] 
+FROM   table1 [, table2 ] 
+WHERE  column_name OPERATOR 
+   (SELECT column_name [, column_name ] 
+   FROM table1 [, table2 ] 
+   [WHERE]) 
+
+
+
+eX:
+SELECT *  
+   FROM CUSTOMERS
+   WHERE ID IN (SELECT ID FROM CUSTOMERS WHERE SALARY > 4500)
+
+Para ser subqueryes 
+
+Precisa estar entre parenteses
+Usada geralmente com SELECT e FROM (mais indicada para consulta)
+
+
+************ Subquerie com insert ***************
+
+INSERT INTO table_name [ (column1 [, column2 ]) ] 
+   SELECT [ *|column1 [, column2 ] 
+   FROM table1 [, table2 ] 
+   [ WHERE VALUE OPERATOR ]
+
+************ Subquerie com update ***************
+
+UPDATE table 
+SET column_name = new_value 
+[ WHERE OPERATOR [ VALUE ] 
+   (SELECT COLUMN_NAME 
+   FROM TABLE_NAME) 
+   [ WHERE) ] 
+
+Ex: UPDATE CUSTOMERS 
+   SET SALARY = SALARY * 0.25 
+   WHERE AGE IN (SELECT AGE FROM CUSTOMERS_BKP WHERE AGE >= 27 )
+
+************ Subquerie com delete ***************
+
+DELETE FROM TABLE_NAME 
+[ WHERE OPERATOR [ VALUE ] 
+   (SELECT COLUMN_NAME 
+   FROM TABLE_NAME) 
+   [ WHERE) ] 
+
+
+ex:DELETE FROM CUSTOMERS 
+   WHERE AGE IN (SELECT AGE FROM CUSTOMERS_BKP WHERE AGE >=27 )
+
+
+
+
+
+
+
+
+
+	
