@@ -112,6 +112,21 @@ CREATE TABLE CUSTOMERS(
    PRIMARY KEY (ID));
 GO
 
+
+CREATE TABLE ACCOUNTS (
+
+	ACC_ID INT NOT NULL,
+	ACC_TOTAL DECIMAL(10,2) NOT NULL,
+	ACC_NUMBER INT NOT NULL,
+	ACC_FK INT NOT NULL,
+	FOREIGN KEY(ACC_FK) REFERENCES CUSTOMERS(ID),
+	ON DELETE CASCADE 
+)
+GO
+	
+
+
+
 -- Quando uma instrução é inserida com sucesso ele volta pra linha de contexto 1
 1>
 
@@ -354,11 +369,292 @@ ex:DELETE FROM CUSTOMERS
    WHERE AGE IN (SELECT AGE FROM CUSTOMERS_BKP WHERE AGE >=27 )
 
 
+*************** Mais comandos do Transact SQL ****************** 
 
+Tirando uma base do mapeamento
 
+use master; -- usando nesse caso a instância com maior previlégio
+ALTER DATABASE exemplo
+SET SINGLE_USER -- um usuário permitido fazendo alteração
+GO
 
+USE master;
+GO
+EXEC SP_DETACH_DB @DBNAME = 'EXEMPLO' -- isso faz com que a base suma das demais bases mapeadas no ambiente porém ela ainda permanece no disco
+GO
 
+*** Agora considere que queremos mapear alguma base de dados 
 
-
-
+EXEC SP_ATTACH_DB_NAME @DBNAME = 'bancoX,
+@FILENAME1='C:\USERS\SYSTEM\BLA BLA BLA\ARQUIVO.MDF',
+@FILENMAE2 = 'C:\USERS\SYSTEM\BLA BLA BLA\ARQUIVO.LDF'
+GO
 	
+-- Dessa forma ela retorna para nossa area de trabalho no studio.
+
+
+*** CONECTANDO O STUDIO EM OUTRO SQL SERVER OUTRO BANCO ****
+
+Precisa do conector via ODBC - Baixe no mysql site
+
+Depois digite na pesquisa do windows 10 está tambem em ferramentas administrativas do windows 
+
+ODBC 64 ou ODBC 32 ou Data source administration
+
+na aba dns de sistema clique em adcionar
+Procure o driver do seu banco no caso estamos usando o do mysql ODBC, crie um nome e as demais configurações
+Concluir,Aplicar Sair
+
+Agora no ms studio
+clique na pasta objetos de servidor com botão direito -> novo vinculo
+Servidro Vinculado: qualquer nome
+Provedor: Microsoft OLE DB Provider for ODBC Drivers
+Nome do Produto: algum nome qualquer
+Fonte de dados: nome do link que criamos lá no odbc driver 32 bits ou 64 do dns do sistema
+
+na aba segurança mude para Serão feitas usando contexto de segurança no box (senha e login)
+
+press ok
+
+Vá na aba servidores vinculados->catalogo do sistemas veja qe todas as bases
+do mysql estão acessiveis
+
+Como utilizar:
+
+select  * from openquery(mysql,'select * from sakila.actor')
+go
+
+mysql foi o nome do vínculo que criei,chamei a database.tabela
+
+pesquisar insert e outras operações
+ 
+
+
+******** Criando databases com FileGroup *********** 
+
+-- Nesse caso é o padrão MDF e LDF. Porém é a mesma lógica para outros grupos.
+
+-- PRIMEIRO O ARQUIVO PRIMARY
+
+use master
+go
+CREATE DATABASE bancoX
+ON
+(NAME = bancoX,
+FILENAME = 'c:\LOCAL\ONDE\GUARDA\ARQUIVO.mdf',
+SIZE = 10, -- TAMANHO EM MEGAS	
+MAXSIZE = 50,
+FILEGROWTH = 5)
+GO
+-- AGORA O LOG
+
+LOG ON 
+(NAME = bancoX_log,
+FILENAME = 'c:\LOCAL\ONDE\GUARDA\ARQUIVO.ldf',
+SIZE = 5,
+MAXSIZE = 25MB.
+FILEGROWTH = 5MB)
+GO
+
+********** CRIANDO LOGIN´s  ***************
+
+-- PUBLIC LOGIN 
+CREATE LOGIN joazinho WITH PASSWORD = '#@$%¨kfkl'
+GO
+
+-- MUDANDO A SENHA QUANDO NO PRIMEIRO ACESSO
+-- ATENÇÃO - CHECK_EXPIRATION PRECISA ESTAR ON
+
+CREATE LOGIN joazinho WITH PASSWORD = '$%¨#W' MUST_CHANGE 
+GO
+
+-- NOVO ADMINISTRADOR DA MÁQUINA (sERVER)
+
+CREATE LOGIN [nomeMaquina\joãzinho] FROM WINDOWS
+GO -- Aqui só se já existir outro usuário no server e 
+dai tu atribui na entrada outro cabra
+
+******* criando um login para um determinado bd *******
+--Ver demais padrões default de acesso(public,maintenence,owner...)
+
+CREATE LOGIN testesauro WITH PASSWORD = '123'
+USE dbqualquer
+CREATE USER testesauro_manutencao FOR LOGIN testesauro WITH DEFAULT_SCHEMA = [Maintenance]
+GO
+
+
+******** backup  na unha ***************
+
+backup full - faz backup de tudo
+
+BACKUP DATABASE [dbqualquer]
+TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPX.bak'	
+WITH
+	NOFORMAT,
+	NOINIT,
+	NAME = N'NOME_DO_BACKUP',
+	SKIP,
+	NOREWIND,
+	NOUNLOAD,
+	STATS = 10 -- retorna o progresso de 10 em 10
+GO	
+
+----------------------------------------------------------------------------------------------------------
+
+backup diferencial OU INCREMENTAL = acrescenta só as informações que foram alteradas desde o ultimo backup
+
+BACKUP DATABASE [dbqualquer]
+TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPX.bak'	
+WITH
+	DIFERENTIAL,
+	NOFORMAT,
+	NOINIT,
+	NAME = N'NOME_DO_BACKUP DIFERENCIAL',
+	SKIP,
+	NOREWIND,
+	NOUNLOAD,
+	STATS = 10 -- retorna o progresso de 10 em 10
+GO	
+	
+-----------------------------------------------------------------------------------------------------------
+
+backup de logs de transação
+
+
+BACKUP LOG [dbqualquer]
+TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPXlog.trn' -- veja que mudou a extensão
+	
+WITH
+	NOFORMAT,
+	NOINIT,
+	NAME = N'NOME_DO_BACKUP',
+	SKIP,
+	NOREWIND,
+	NOUNLOAD,
+	STATS = 10 -- retorna o progresso de 10 em 10
+GO	
+
+
+/********** VERIFICANDO AS CONSISTÊNCIAS E DEMAIS PROBLEMAS DE BASE E DISCO ***********************/
+
+Verificar consistência do espaço em disco
+
+use nomedatabase;
+go
+
+DBCC CHECKALLOC
+GO
+
+Verificar a integridade do banco atual
+
+use nomedatabase;
+go
+
+DBCC CHECKCATALOG
+GO
+
+
+Vefiricar a integridade lógica e fisica dos objetos do banco de dados
+
+use nomedatabase;
+go
+
+DBCC CHECKDB
+GO
+
+
+Reduzir o tamanho do arquivo de log
+
+use nomedatabase
+go
+
+DBCC SHRINKDATABASE (nomedatabase,TRUNCATEONLY)
+
+Reduzir o tamanho dos dados de arquivo de log do banco de dados em uso
+
+use nomedatabase
+go
+
+ALTER DATABASE databasequalquer -- mudando para recuperação simples
+SET RECOVERY SIMPLE
+GO
+
+--comprimindo o arquivo de log para 1 mb
+
+DBCC SHRINKFILE (nomedatabase,1)
+GO
+
+-- Fazendo um reset no recovery que foi feito
+
+ALTER DATABASE nomedatabase
+SET RECOVERY FULL
+GO
+
+-- CHECANDO FILE GROUP
+
+use nomedatabase
+DBCC CHECKFILEGROUP
+go 
+
+-- MONSTRANDO ESTATISTICAS DE USO
+DBCC SHOW_STATISTICS 
+GO
+
+
+*********** CRIANDO ESTATÍSTICAS DE USO A PARTIR DO TERMINAL *************
+
+USE databasequaquer
+EXEC sp_helpstats 'nomedatabela' ,'all'
+GO
+
+*Mas temos que criar a estatisticas sobre a coluna que queremos analisar
+
+CREATE STATISTICS nomeDaEstatistica
+ON tabelaNomeaSerUsada(coluna)
+
+
+---------- Criando um job na Unha -----------------------------------------
+Os jobs são ações agendadas(Qualquer alteração ou Otimização...)no banco
+
+USEmsdb;
+GO
+-- CRIANDO UM JOB PARA SER EXECUTADO PELO SQL SERVER AGENT 
+EXECdbo.sp_add_job
+@job_name = N’BACKUP SEMANAL’;
+GO
+-- ADICIONANDO UMA OPERAÇÃO AO JOB 
+EXEC sp_add_jobstep
+@job_name = N’BACKUP SEMANAL’,
+@step_name = N’Somente Leitura’,
+@subsystem = N’TSQL’,
+@command = N’ALTER DATABASE ESTUDANTES SET READ_ONLY’,
+@retry_attempts =5, -- número de tentativas no caso de erro 
+@retry_interval =5; -- no caso de erro executar em 5 minutos novamente 
+GO
+-- AGENDANDO O JOB PARA EXECUTAR 
+EXECdbo.sp_add_schedule
+@schedule_name = N’RunOnce’,
+@freq_type =1, -- - uma unica vez 
+@active_start_time =233000; -- o horário que será executado é as 23:00:00 
+USEmsdb;
+GO
+-- SETANDO O AGENDAMENTO 
+EXEC sp_attach_schedule
+@job_name = N’BACKUP SEMANAL’,
+@schedule_name = N’RunOnce’;
+GO
+-- CRIANDO O JOB NO SERVIDOR
+EXECdbo.sp_add_jobserver
+@job_name = N’BACKUP SEMANAL’;
+GO
+
+
+-- Note que é preciso criar a procedure antes de executar
+
+CREATE procedure [dbo].[sp_add_job_quick] 
+@job nvarchar(128),
+@mycommand nvarchar(max), 
+@servername nvarchar(28),
+@startdate nvarchar(8),
+@starttime nvarchar(8)
+as
