@@ -1,4 +1,4 @@
----------------- PL SQL / Oracle Database  ------------------------ 
+---------------- PL SQL / Oracle Database Terminal by Abuthol ------------------------ 
 
 *-* download da versão express
 
@@ -15,6 +15,11 @@ https://docs.oracle.com/cd/B25329_01/doc/admin.102/b25107/getstart.htm
 
 
 https://docs.oracle.com/cd/B25329_01/doc/appdev.102/b25108/xedev_sqlplus.htm#BJEIEGBF
+
+
+-- Para Essa instalação não considerei o uso do apex
+
+
 
 ********************************************************************
 
@@ -80,14 +85,27 @@ com o banco de dados do sistema operacional usado.
 - Depois uma tabela que conterá os dados dentro da tablespace
 - Uma database para o oracle é o conjunto maior e as tablespaces internamentes a ele
 
+************* limpar tela ******************
+
+SQL>clear scr
+
+************* CRIANDO UMA TABLESPACE (PARA NÃO USAR A SYSTEM) *************
+
+CREATE TABLESPACE nomeTableSpace
+	DATAFILE 'nomeArquivo.dbf' -- Pode especificar o caminho também
+	SIZE 1M;
+
+************* Consultando a Tablespace Criada ******************************
+
+SELECT TABLESPACE_NAME,FILE_NAME,BYTES /1024/1024 MB FROM DBA_DATA_FILES;
 
 -> Consultando os usuários de todas as Tablespaces
 
 SELECT USERNAME,DEFAULT_TABLESPACE FROM DBA_USERS;
 
-ESPECIFICANDO UMA TABLESPACE
+->ESPECIFICANDO UMA TABLESPACE
 
--> select USERNAME, DEFAULT_TABLESPACE from DBA_USERS where DEFAULT_TABLESPACE = 'DEV_DB';
+-> SELECT USERNAME, DEFAULT_TABLESPACE from DBA_USERS where DEFAULT_TABLESPACE = 'DEV_DB';
 
 --> A estrutura interna das tabelas é considerada como seguimentos
 
@@ -96,33 +114,19 @@ Dai vem a expressão DBA porque os grupos de tabelas são sempre
 associados com um login e senha ou seja, a um usuário que irá
 operar o banco.
 
-
 **Portanto,por enquanto,preocupe-se apenas em criar as tabelas e deixe que o banco se encarregue do controle das linhas
-
 
 *** Fazer Select definindo as colunas é melhor que select * from tabela;
 
 
----------------- COMANDOS ------------------------
-***Vou colocar aqui só o que é importante ou que difere do mysql em geral
+************* RETORNANDO TODAS AS TABELAS DO USER LOGADO **********
 
+SELECT TABLE_NAME FROM USER_TABLES;
 
-describe ou desc nomeTabela; mostra a estrutura da tabela 
+**Vai retornar todas as tabelas inclusive as que são nativas
 
+-> Tem mais Comando o que for achando pra acelerar consultas vou subindo
 
-********** Primary Key **************
-
-Para definir uma chave primaria é um pouco diferente do que era feito no mysql
-
-ex mysql:
-
-id_cliente int primary key auto_increment;
-
-no Oracle
-
-codigo_cliente number(10) constraint pk_cliente primary key,
-
-ou seja, a chave primaria é pk cliente e não código cliente.
 
 
 	

@@ -1,0 +1,250 @@
+----------- ORACLE SQL ----------------
+
+funções importantes (datas,texto,slice,filtro...)
+
+to_char
+SELECT NOME_PROJETO,TO_CHAR(DATA_INICIO,'DAY',DD) FROM PROJETO;
+--Retorna os nomes dos dias (de acordo com o idioma do sistema)
+
+-- concatenando
+
+SELECT NOME_PROJETO,TO_CHAR(DATA_INICIO,'DAY,DD "de " MONTH "de" YYYY') FROM PROJETO;
+
+-- outra formatação da data
+
+SELECT NOME_TAREFA,TO_CHAR(DATA_INICIO,'DD-MM-YY') FROM TAREFA;
+
+	
+-- Filtro data
+
+SELECT NOME_TAREFA,TO_CHAR(DATA_INICIO,'DD-MM-YY') FROM TAREFA where TO_CHAR(DATA_INICIO,'MM') = 05;
+
+--Lower(downcase)
+
+select colum...lower(coluna)...from tabela;
+
+-- inicap(uppercase primeira letra)
+
+select colum...initcap(coluna)...from tabela;
+
+--concat
+
+select concat(coluna1,coluna2...) from tabela; --junta os textos
+
+
+--round
+
+select round(1521,22) from dual;
+
+********** Condicionais *******************
+
+
+-- Case e when
+
+SELECT NOME_PROJETO, 
+	CASE
+	WHEN TO_CHAR(DATA_FIM,'YYMMDD') < TO_CHAR(SYSDATE,'YYMMDD')
+	THEN 'PROJETO EM ANDAMENTO'
+	WHEN TO_CHAR(DATA_FIM,'YYMMDD') = TO_CHAR(SYSDATE,'YYMMDD') 
+	THEN 'Em atuação'
+	else 'Não iniciada'
+	end as PRAZO -- NOME DE COLUNA NÃO LEVA "" 
+	FROM 
+	PROJETO;
+
+-- aGORA NA OUTRA TABELA
+
+SELECT NOME_TAREFA, 
+	CASE
+	WHEN TO_CHAR(DATA_FIM,'YYMMDD') < TO_CHAR(SYSDATE,'YYMMDD')
+	THEN 'TAREFA EM ANDAMENTO'
+	WHEN TO_CHAR(DATA_FIM,'YYMMDD') = TO_CHAR(SYSDATE,'YYMMDD') 
+	THEN 'ACONTECENDO'
+	else 'Não iniciada'
+	end as PRAZO -- NOME DE COLUNA NÃO LEVA "" 
+	FROM 
+	TAREFA;
+
+-- contando linhas
+SELECT COUNT(CODIGO_PROJETO) FROM PROJETO;
+
+--CONTANDO EM GRUPOS
+
+select count(*) CODIGO_PROJETO FROM PROJETO GROUP BY NOME_PROJETO;
+
+
+*************** PL SQL ********************* 
+
+Procedural languange extensions for 
+para SQL
+Agora o Banco executa instruções(Server) com uma linguagem capaz de criar variáveis, funções,condições, tratamento de erros e procedures.
+
+Declaração obrigatória
+
+DECLARE
+
+END;	
+
+O que vier no meio é o que vai ser executado
+
+
+Ex:Já criando variáveis e atribuindo valores,também explorando condições
+
+|| pipe pipe concatena strings e vars
+
+'' USE ASPAS SIMPLES PARA STRINGS
+:= PRECISA DE ESPAÇOS ENTRE AS DECLARAÇÕES
+O END PRECISA TERMINAR COM /
+EX: END;/ PARA ELE PODER EXECUTAR O COMANDO NO TERMINAL
+Para que o terminal retorne o print ou incluir essa declaração
+NO BEGIN: DBMS.OUTPUT.ENABLE;
+OU 
+setar com a seguinte linha
+SQL> set serveroutput on size 30000;
+Para Strings = '' aspas simples
+Lembre-se do Then após a clusão do if ou do ELSIF que não é ELSEIF
+Lembre-se de Fechar o if -> END IF;
+ex:
+
+DECLARE
+	
+	NOME varchar2(25) := 'Diego';
+	IDADE number(2) := 33;
+BEGIN
+	
+	DBMS_OUTPUT.ENABLE;
+	DBMS_OUTPUT.PUT_LINE(NOME || ' ' || IDADE);
+	
+	IF IDADE < 18 THEN
+	DBMS_OUTPUT.PUT_LINE('MENOR DE IDADE');
+	ELSIF IDADE >= 18 AND IDADE < 50 THEN
+	DBMS_OUTPUT.PUT_LINE('ADULTO');
+	ELSE
+	DBMS_OUTPUT.PUT_LINE('DESCONHECIDO');
+	END IF;
+END;
+/
+
+
+************ laços **************************
+
+** A instrução FOR não tem ; no sei fechamento 
+o for é apartado do da condição do laço loop
+então primeiro cria o laço for e depois o que for 
+repetido dentro dele com o loop que está a instrução
+
+DECLARE 
+	INIT NUMBER(2) := 0;
+ 	CALC NUMBER(10);
+BEGIN 
+	FOR INIT IN 1..20
+ 
+LOOP	
+	CALC:=INIT*21;
+	DBMS_OUTPUT.PUT_LINE(CALC);
+END LOOP;	
+			
+END;
+/
+
+
+*************** CURSOR ************************
+
+DECLARE
+	CUR_PROJETO VARCHAR2(100);
+	CUR_DATA_FIM DATE;
+
+CURSOR 
+	NOME_CUR_PROJETO
+		IS 
+	SELECT NOME_PROJETO,DATA_FIM FROM PROJETO;
+	
+BEGIN 
+	OPEN NOME_CUR_PROJETO;
+	LOOP 
+	FETCH NOME_CUR_PROJETO INTO CUR_PROJETO,CUR_DATA_FIM;
+	DBMS_OUTPUT.PUT_LINE('PROJETO: ' || CUR_PROJETO || 'Entrega' || TO_CHAR(CUR_DATA_FIM, 'MONTH-YY'));
+	
+	EXIT WHEN  NOME_CUR_PROJETO%NOTFOUND; 
+
+	END LOOP;
+	CLOSE NOME_CUR_PROJETO;
+END;
+/
+	
+
+********** Exceptions,Procedure,function,trigger ******************
+
+Procedures: Sem Retorno,executa um bloco de código 
+Function: Tem que retornar algum valor, da execução de algum bloco de código.
+
+RAISE = DISPARA ALGUMA AÇÃO
+
+
+PROCEDURE
+
+-------------- 
+
+CREATE OR REPLACE PROCEDURE ADD_NEW_PROJETO(
+	CODIGO IN NUMBER,
+	NOME IN VARCHAR2,
+	DATAI IN DATE,
+	DATAF IN DATE
+)
+
+IS 
+	SEM_CODIGO EXCEPTION;
+	
+BEGIN
+	IF CODIGO = 0 THEN
+	RAISE SEM_PROJETO;
+	ELSE
+	INSERT INTO PROJETO(CODIGO,NOME,DATAI,DATAF);
+	END IF;
+	
+	EXCEPTION
+		WHEN DUP_VAL_ON_INDEX THEN --DUP_VAL É NATIVO DA LANG
+		RAISE_APPLICATION_ERRO(-20000,'CÓDIGO DO PROJETO DUPLICADO');
+	WHEN SEM_CODIGO THEN --DUP_VAL 
+		RAISE_APPLICATION_ERRO(-20000,'NÃO INFORMOU CÓDIGO DO PROJETO');
+	WHEN OTHERS THEN -- OTHERS É NATIVO DA LANG
+	RAISE_APPLICATION_ERROR(-120000,'ERRO NA INCLUSÃO');
+	
+END;
+/
+
+********* cHAMANDO A pROCEDURE *****************
+
+EXECUTE ADD_NEW_PROJETO(6,'TEST',TO_DATE('07/06/2018','DD/MM/YYYY'),TO_DATE('07/06/2020','DD/MM/YYYY'));
+
+
+
+*********** TRIGGER *************** 
+
+CREATE OR REPLACE TRIGGER REGISTRA_TAREFA,'TAREFA INICIAL',SYSDATE,SYSDATE:NEW.CODIGO_PROJETO)
+AFTER INSERT 
+ON PROJETO
+FOR EACH_ROW
+
+BEGIN
+	INSERT INTO TAREFA VALUES(SEQ_CD_TAREFA.NEXTVAL
+
+************ CASE *******************
+
+SELECT COUNTRY_NAME,
+CASE
+WHEN REGION_ID = 2 THEN 'AMERICA DO NORTE'
+WHEN REGION_ID = 1 THEN 'EUROPA'
+WHEN REGION_ID = 3 THEN 'ASIA'
+WHEN REGION_ID = 4 THEN 'ORIENTE MEDIO'
+ELSE 'OUTRO CONTINENTE'
+END
+FROM COUNTRIES;
+
+
+
+************ FUNÇÕES *****************
+
+SELECT SUM(SALARY) AS SOMA_DE_SALARIO FROM EMPLOYEES;
+
+lEMBRANDO QUE O ALIAS NÃO TEM STRING '' OU PODE TER ""
