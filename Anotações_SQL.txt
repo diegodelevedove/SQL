@@ -1052,6 +1052,35 @@ SHOW GRANTS;
 Mostra permissões de uso 
 
 
+/******************* Variáveis ********************/ 
+
+#Podemos declarar variáveis também:
+
+SET @nomeVar = 'Tanembaum';
+
+#Retornando
+
+SELECT @nomeVar;
+#Podemos usar alias 
+SELECT @nomeVar as "nome";
+
+#Para incerir instruções é como se segue
+#digamos que você queira uma query em uma variável
+
+SET @queri = 'select * from actor';
+PREPARE declara FROM @queri;
+EXECUTE declara;
+
+#Digamos que você queira concatenar
+
+set @nomeColuna = 'last_name';
+set @queri = concat('select ',@nomeColuna,' from actor');
+prepare declara from @queri;
+execute declara;
+
+/************ Funções e Procedures ***********************/
+
+
 
     
     
