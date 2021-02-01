@@ -1078,11 +1078,19 @@ set @queri = concat('select ',@nomeColuna,' from actor');
 prepare declara from @queri;
 execute declara;
 
-/************ Funções e Procedures ***********************/
+/************ Eventos ***********************/
+
+#São eventos programados, mas  precisa de autorização.
+#um evendo é ativado baseado no tempo e não em uma ação
+#como é o caso do trigger, basicamente.
+
+CREATE EVENT aumento
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 hour #para minuto é minute
+DO 
+UPDATE sakila.payment set amount = amount*2;
+show events;
 
 
-
-    
     
     
     
