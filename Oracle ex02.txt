@@ -1,3 +1,6 @@
+Documentação:
+https://docs.oracle.com/database/121/LNPLS/toc.htm
+
 ----------- ORACLE SQL ----------------
 
 funções importantes (datas,texto,slice,filtro...)
