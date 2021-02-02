@@ -91,3 +91,15 @@ VALUES(1,'Fazer Estoque',TO_DATE('01/06/2018','DD/MM/YYYY'),TO_DATE('01/05/2018'
 -- Inserir um valor na ultima linha com auto_incremente(ou seja ele pega o ultimo e soma +1
 
 INSERT INTO TAREFA VALUES(SEQ_TAREFA.NEXTVAL,'TESTE', TO_DATE('16/08/2018','DD/MM/YYYY'), TO_DATE('15/10/2018','DD/MM/YYYY'));
+
+
+
+
+/**************** MANIPULANDO ***********************/
+https://www.oracle.com/br/technical-resources/articles/database-performance/oracle-scheduler-jobs.html
+
+
+select * from nomeTabela; retorno dados
+describe nomeTabela; retorno estrutura da tabela;
+Drop table nomeTabela; destroi a tabela 
+
