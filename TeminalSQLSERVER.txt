@@ -5,16 +5,16 @@ entre no terminal via cmd
 digite 
 
 sqlcmd
-Se o terminal apontar 1> significa que CONECTAMOS NO LOCALHOST e podemmos executar os comandos necess·rios
+Se o terminal apontar 1> significa que CONECTAMOS NO LOCALHOST e podemmos executar os comandos necess√°rios
 
 1> 
 
-** Se vocÍ definiou alguma autenticaÁ„o a maneira certa de iniciar È entrando com os par‚metros
+** Se voc√™ definiou alguma autentica√ß√£o a maneira certa de iniciar √© entrando com os par√¢metros
 
-sqlcmd -S myServer\instanceName\SQLEXPRESS -U nomeDoUsu·rio -P senha
+sqlcmd -S myServer\instanceName\SQLEXPRESS -U nomeDoUsu√°rio -P senha
 
-***Lembrando(servidores sql trabalham como uma ˙nica inst‚ncia(oracle,ms server) que significar dizer que 
-para cada usu·rio terei uma inst‚ncia do banco
+***Lembrando(servidores sql trabalham como uma √∫nica inst√¢ncia(oracle,ms server) que significar dizer que 
+para cada usu√°rio terei uma inst√¢ncia do banco
 
 ********* criando um backup ************
 Backup database TestDB to disk = 'D:\testdb_full.bak'
@@ -36,14 +36,14 @@ Restore database TestDB from disk = 'D:\TestDB_log.trn' with norecovery
 SELECT 	DB_NAME()
 GO
 
-**O go fecha a linha de cÛdigo e tambÈm mostra a base de dados corrente seleciona a base de dados default 
+**O go fecha a linha de c√≥digo e tamb√©m mostra a base de dados corrente seleciona a base de dados default 
 vai aparecer assim
 
 1>-------------
 master
-**a inst‚ncia acima È a principal
+**a inst√¢ncia acima √© a principal
 
-********* criar um usu·rio *****************
+********* criar um usu√°rio *****************
 ex:
 create user fulano for login senha
 
@@ -74,7 +74,7 @@ go
 
 /********* Drop Databases
 
-*importante = mude para outra database se a database que vocÍ quer deletar È a base de dados corrente
+*importante = mude para outra database se a database que voc√™ quer deletar √© a base de dados corrente
 
 use outraDatabase
 
@@ -90,14 +90,14 @@ go
 sqlcmd -S .\SQLEXPRESS -q drop database [nomedaDatabase]
 
 
--------------- Parte Pr·tica --------------------
+-------------- Parte Pr√°tica --------------------
 CREATE DATABASE nomeDaDatabase
 go
 use nomeDatabase
 go
 
 
-**************** SQL PR¡TICO **********************
+**************** SQL PR√ÅTICO **********************
 
 ----- criando as tabelas ----------
 
@@ -114,8 +114,8 @@ GO
 
 
 CREATE TABLE ACCOUNTS (
-
-	ACC_ID INT NOT NULL,
+	#para o auto incremente = identity(1,1) vai come√ßar no 1 e interar + 1 
+	ACC_ID  IDENTITY(1,1) INT NOT NULL,
 	ACC_TOTAL DECIMAL(10,2) NOT NULL,
 	ACC_NUMBER INT NOT NULL,
 	ACC_FK INT NOT NULL,
@@ -127,12 +127,12 @@ GO
 
 
 
--- Quando uma instruÁ„o È inserida com sucesso ele volta pra linha de contexto 1
+-- Quando uma instru√ß√£o √© inserida com sucesso ele volta pra linha de contexto 1
 1>
 
 ****** Selecionano todos os registros da tabela
 
-1>SELECT * FROM CUSTOMERS; -- N√O PRECISO FECHAR O COMANDO MAS PRECISA DO GO
+1>SELECT * FROM CUSTOMERS; -- N√ÉO PRECISO FECHAR O COMANDO MAS PRECISA DO GO
 2>GO
 --lEMBRAR DO GO
 
@@ -162,7 +162,7 @@ INSERT INTO CUSTOMERS (ID,NAME,AGE,ADDRESS,SALARY)
 VALUES (6, 'Komal', 22, 'MP', 4500.00 );
 
 
-ou POde tambÈm entrar com valores diretamente como abaixo
+ou POde tamb√©m entrar com valores diretamente como abaixo
 
 INSERT INTO CUSTOMERS VALUES (7, 'Muffy', 24, 'Indore', 10000.00 );
 
@@ -217,11 +217,11 @@ go
 Especificar busca, antes,depois,com ou sem os valores...
 Lembre-se das aspas ''
 
-comeÁar com = like 'valor%'
+come√ßar com = like 'valor%'
 terminar com = like '%valor'
 qualquer valor = like '%valor%'
 
-valores que comeÁam com algum valor especÌfico com 3 caracteres = 'valor_%_%'
+valores que come√ßam com algum valor espec√≠fico com 3 caracteres = 'valor_%_%'
 
 ex:SELECT * FROM CUSTOMERS WHERE SALARY LIKE '200%'
 GO
@@ -249,12 +249,12 @@ GROUP BY column1, column2
 ORDER BY column1, column2 
 
 EX:
-SELECT NAME,SUM(SALARY) AS "Soma dos Sal·rios" from CUSTOMERS GROUP BY NAME
+SELECT NAME,SUM(SALARY) AS "Soma dos Sal√°rios" from CUSTOMERS GROUP BY NAME
 GO
 
 
 ---------- DISTINCT --------------------
-retorna todos os resultados ˙nicos, exclui os duplicados,usado com select
+retorna todos os resultados √∫nicos, exclui os duplicados,usado com select
 
 SELECT DISTINCT column1, column2,.....columnN  
 FROM table_name 
@@ -270,7 +270,8 @@ GO
 Vamos criar outra tabela e juntar as duas
 
 CREATE TABLE ORDERS( 
-   OID INT NOT NULL, 
+   
+   OID INT IDENTITY(1,1) NOT NULL, 
    PRODUCT TEXT  NOT NULL,	
    PRICE DECIMAL(10,2)   NOT NULL,	
    CLIENT_ID INT,	 
@@ -284,9 +285,9 @@ Carga
 INSERT INTO ORDERS(OID,PRODUCT,PRICE) 
 VALUES(01,"CHAIR",50.00),
 (02,"KNIFE",10.00),
-(03,"CACHA«A",12.30),
+(03,"CACHA√áA",12.30),
 (04,"PORN_MOVIE",20.05),
-(05,"BONECA_INFL¡VEL",299.90),
+(05,"BONECA_INFL√ÅVEL",299.90),
 (06,"FUZIL_AK47",1050.12)
 GO
 
@@ -305,10 +306,10 @@ GO
 TIPOS DE JOIN
 
 INNER JOIN = RETORNA A MESMA QUANTIDADE DE LINHAS DE AMBAS TABELAS
-LEFT JOIN = RETORNA O QUE TEM NA TABELA "A" MESMO N√O TENDO VALOR EM "B"
-RIGTH JOIN =  RETORNA O QUE TEM NA TABELA "B" MESMO N√O TENDO VALOR EM "A"
+LEFT JOIN = RETORNA O QUE TEM NA TABELA "A" MESMO N√ÉO TENDO VALOR EM "B"
+RIGTH JOIN =  RETORNA O QUE TEM NA TABELA "B" MESMO N√ÉO TENDO VALOR EM "A"
 FULL JOIN = RETORNA TODAS AS LINHAS QUE COMBINAM EM AMBAS TABELAS
-SELF JOIN = JUNTAR A TABELA COM ELA MESMA RENOMEANDO A SEGUNDA C”PIA COMO SE FOSSE O MERGE
+SELF JOIN = JUNTAR A TABELA COM ELA MESMA RENOMEANDO A SEGUNDA C√ìPIA COMO SE FOSSE O MERGE
 CARTESIAN JOIN = RETORNA UM PRODUTO CARTESIANO DOS DADOS DE DUAS OU MAIS TABELAS
 
 
@@ -373,14 +374,14 @@ ex:DELETE FROM CUSTOMERS
 
 Tirando uma base do mapeamento
 
-use master; -- usando nesse caso a inst‚ncia com maior previlÈgio
+use master; -- usando nesse caso a inst√¢ncia com maior previl√©gio
 ALTER DATABASE exemplo
-SET SINGLE_USER -- um usu·rio permitido fazendo alteraÁ„o
+SET SINGLE_USER -- um usu√°rio permitido fazendo altera√ß√£o
 GO
 
 USE master;
 GO
-EXEC SP_DETACH_DB @DBNAME = 'EXEMPLO' -- isso faz com que a base suma das demais bases mapeadas no ambiente porÈm ela ainda permanece no disco
+EXEC SP_DETACH_DB @DBNAME = 'EXEMPLO' -- isso faz com que a base suma das demais bases mapeadas no ambiente por√©m ela ainda permanece no disco
 GO
 
 *** Agora considere que queremos mapear alguma base de dados 
@@ -397,42 +398,42 @@ GO
 
 Precisa do conector via ODBC - Baixe no mysql site
 
-Depois digite na pesquisa do windows 10 est· tambem em ferramentas administrativas do windows 
+Depois digite na pesquisa do windows 10 est√° tambem em ferramentas administrativas do windows 
 
 ODBC 64 ou ODBC 32 ou Data source administration
 
 na aba dns de sistema clique em adcionar
-Procure o driver do seu banco no caso estamos usando o do mysql ODBC, crie um nome e as demais configuraÁıes
+Procure o driver do seu banco no caso estamos usando o do mysql ODBC, crie um nome e as demais configura√ß√µes
 Concluir,Aplicar Sair
 
 Agora no ms studio
-clique na pasta objetos de servidor com bot„o direito -> novo vinculo
+clique na pasta objetos de servidor com bot√£o direito -> novo vinculo
 Servidro Vinculado: qualquer nome
 Provedor: Microsoft OLE DB Provider for ODBC Drivers
 Nome do Produto: algum nome qualquer
-Fonte de dados: nome do link que criamos l· no odbc driver 32 bits ou 64 do dns do sistema
+Fonte de dados: nome do link que criamos l√° no odbc driver 32 bits ou 64 do dns do sistema
 
-na aba seguranÁa mude para Ser„o feitas usando contexto de seguranÁa no box (senha e login)
+na aba seguran√ßa mude para Ser√£o feitas usando contexto de seguran√ßa no box (senha e login)
 
 press ok
 
-V· na aba servidores vinculados->catalogo do sistemas veja qe todas as bases
-do mysql est„o acessiveis
+V√° na aba servidores vinculados->catalogo do sistemas veja qe todas as bases
+do mysql est√£o acessiveis
 
 Como utilizar:
 
 select  * from openquery(mysql,'select * from sakila.actor')
 go
 
-mysql foi o nome do vÌnculo que criei,chamei a database.tabela
+mysql foi o nome do v√≠nculo que criei,chamei a database.tabela
 
-pesquisar insert e outras operaÁıes
+pesquisar insert e outras opera√ß√µes
  
 
 
 ******** Criando databases com FileGroup *********** 
 
--- Nesse caso È o padr„o MDF e LDF. PorÈm È a mesma lÛgica para outros grupos.
+-- Nesse caso √© o padr√£o MDF e LDF. Por√©m √© a mesma l√≥gica para outros grupos.
 
 -- PRIMEIRO O ARQUIVO PRIMARY
 
@@ -456,26 +457,26 @@ MAXSIZE = 25MB.
 FILEGROWTH = 5MB)
 GO
 
-********** CRIANDO LOGIN¥s  ***************
+********** CRIANDO LOGIN¬¥s  ***************
 
 -- PUBLIC LOGIN 
-CREATE LOGIN joazinho WITH PASSWORD = '#@$%®kfkl'
+CREATE LOGIN joazinho WITH PASSWORD = '#@$%¬®kfkl'
 GO
 
 -- MUDANDO A SENHA QUANDO NO PRIMEIRO ACESSO
--- ATEN«√O - CHECK_EXPIRATION PRECISA ESTAR ON
+-- ATEN√á√ÉO - CHECK_EXPIRATION PRECISA ESTAR ON
 
-CREATE LOGIN joazinho WITH PASSWORD = '$%®#W' MUST_CHANGE 
+CREATE LOGIN joazinho WITH PASSWORD = '$%¬®#W' MUST_CHANGE 
 GO
 
--- NOVO ADMINISTRADOR DA M¡QUINA (sERVER)
+-- NOVO ADMINISTRADOR DA M√ÅQUINA (sERVER)
 
-CREATE LOGIN [nomeMaquina\jo„zinho] FROM WINDOWS
-GO -- Aqui sÛ se j· existir outro usu·rio no server e 
+CREATE LOGIN [nomeMaquina\jo√£zinho] FROM WINDOWS
+GO -- Aqui s√≥ se j√° existir outro usu√°rio no server e 
 dai tu atribui na entrada outro cabra
 
 ******* criando um login para um determinado bd *******
---Ver demais padrıes default de acesso(public,maintenence,owner...)
+--Ver demais padr√µes default de acesso(public,maintenence,owner...)
 
 CREATE LOGIN testesauro WITH PASSWORD = '123'
 USE dbqualquer
@@ -501,7 +502,7 @@ GO
 
 ----------------------------------------------------------------------------------------------------------
 
-backup diferencial OU INCREMENTAL = acrescenta sÛ as informaÁıes que foram alteradas desde o ultimo backup
+backup diferencial OU INCREMENTAL = acrescenta s√≥ as informa√ß√µes que foram alteradas desde o ultimo backup
 
 BACKUP DATABASE [dbqualquer]
 TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPX.bak'	
@@ -518,11 +519,11 @@ GO
 	
 -----------------------------------------------------------------------------------------------------------
 
-backup de logs de transaÁ„o
+backup de logs de transa√ß√£o
 
 
 BACKUP LOG [dbqualquer]
-TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPXlog.trn' -- veja que mudou a extens„o
+TO DISK = N 'C:\PASTA\PASTA\PASTA\BACKUPXlog.trn' -- veja que mudou a extens√£o
 	
 WITH
 	NOFORMAT,
@@ -535,9 +536,9 @@ WITH
 GO	
 
 
-/********** VERIFICANDO AS CONSIST NCIAS E DEMAIS PROBLEMAS DE BASE E DISCO ***********************/
+/********** VERIFICANDO AS CONSIST√äNCIAS E DEMAIS PROBLEMAS DE BASE E DISCO ***********************/
 
-Verificar consistÍncia do espaÁo em disco
+Verificar consist√™ncia do espa√ßo em disco
 
 use nomedatabase;
 go
@@ -554,7 +555,7 @@ DBCC CHECKCATALOG
 GO
 
 
-Vefiricar a integridade lÛgica e fisica dos objetos do banco de dados
+Vefiricar a integridade l√≥gica e fisica dos objetos do banco de dados
 
 use nomedatabase;
 go
@@ -575,7 +576,7 @@ Reduzir o tamanho dos dados de arquivo de log do banco de dados em uso
 use nomedatabase
 go
 
-ALTER DATABASE databasequalquer -- mudando para recuperaÁ„o simples
+ALTER DATABASE databasequalquer -- mudando para recupera√ß√£o simples
 SET RECOVERY SIMPLE
 GO
 
@@ -601,7 +602,7 @@ DBCC SHOW_STATISTICS
 GO
 
 
-*********** CRIANDO ESTATÕSTICAS DE USO A PARTIR DO TERMINAL *************
+*********** CRIANDO ESTAT√çSTICAS DE USO A PARTIR DO TERMINAL *************
 
 USE databasequaquer
 EXEC sp_helpstats 'nomedatabela' ,'all'
@@ -614,42 +615,42 @@ ON tabelaNomeaSerUsada(coluna)
 
 
 ---------- Criando um job na Unha -----------------------------------------
-Os jobs s„o aÁıes agendadas(Qualquer alteraÁ„o ou OtimizaÁ„o...)no banco
+Os jobs s√£o a√ß√µes agendadas(Qualquer altera√ß√£o ou Otimiza√ß√£o...)no banco
 
 USEmsdb;
 GO
 -- CRIANDO UM JOB PARA SER EXECUTADO PELO SQL SERVER AGENT 
 EXECdbo.sp_add_job
-@job_name = NíBACKUP SEMANALí;
+@job_name = N¬íBACKUP SEMANAL¬í;
 GO
--- ADICIONANDO UMA OPERA«√O AO JOB 
+-- ADICIONANDO UMA OPERA√á√ÉO AO JOB 
 EXEC sp_add_jobstep
-@job_name = NíBACKUP SEMANALí,
-@step_name = NíSomente Leituraí,
-@subsystem = NíTSQLí,
-@command = NíALTER DATABASE ESTUDANTES SET READ_ONLYí,
-@retry_attempts =5, -- n˙mero de tentativas no caso de erro 
+@job_name = N¬íBACKUP SEMANAL¬í,
+@step_name = N¬íSomente Leitura¬í,
+@subsystem = N¬íTSQL¬í,
+@command = N¬íALTER DATABASE ESTUDANTES SET READ_ONLY¬í,
+@retry_attempts =5, -- n√∫mero de tentativas no caso de erro 
 @retry_interval =5; -- no caso de erro executar em 5 minutos novamente 
 GO
 -- AGENDANDO O JOB PARA EXECUTAR 
 EXECdbo.sp_add_schedule
-@schedule_name = NíRunOnceí,
+@schedule_name = N¬íRunOnce¬í,
 @freq_type =1, -- - uma unica vez 
-@active_start_time =233000; -- o hor·rio que ser· executado È as 23:00:00 
+@active_start_time =233000; -- o hor√°rio que ser√° executado √© as 23:00:00 
 USEmsdb;
 GO
 -- SETANDO O AGENDAMENTO 
 EXEC sp_attach_schedule
-@job_name = NíBACKUP SEMANALí,
-@schedule_name = NíRunOnceí;
+@job_name = N¬íBACKUP SEMANAL¬í,
+@schedule_name = N¬íRunOnce¬í;
 GO
 -- CRIANDO O JOB NO SERVIDOR
 EXECdbo.sp_add_jobserver
-@job_name = NíBACKUP SEMANALí;
+@job_name = N¬íBACKUP SEMANAL¬í;
 GO
 
 
--- Note que È preciso criar a procedure antes de executar
+-- Note que √© preciso criar a procedure antes de executar
 
 CREATE procedure [dbo].[sp_add_job_quick] 
 @job nvarchar(128),
