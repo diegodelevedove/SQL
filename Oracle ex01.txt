@@ -128,6 +128,8 @@ UPDATE employees SET salary=9200 WHERE employee_id=1234 # DML
 
 COMMIT COMMENT 'Updated salaries'; -- Comitando a operação
 
+-- Lembrando que no buffer cache temos uma área de undo também
+
 /*************** Alters Session *****************************/
 
 São controles de tempo, da hora que o usuário entrar até hora que é chutado
