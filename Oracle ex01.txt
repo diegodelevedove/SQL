@@ -1,6 +1,5 @@
 -- exercicio 01
 
-
 CREATE TABLE PROJETO(
 	CODIGO_PROJETO NUMBER(5) CONSTRAINT PK_PROJETO PRIMARY KEY,  
 	NOME_PROJETO VARCHAR2(15) NOT NULL,
@@ -91,6 +90,50 @@ VALUES(1,'Fazer Estoque',TO_DATE('01/06/2018','DD/MM/YYYY'),TO_DATE('01/05/2018'
 -- Inserir um valor na ultima linha com auto_incremente(ou seja ele pega o ultimo e soma +1
 
 INSERT INTO TAREFA VALUES(SEQ_TAREFA.NEXTVAL,'TESTE', TO_DATE('16/08/2018','DD/MM/YYYY'), TO_DATE('15/10/2018','DD/MM/YYYY'));
+
+
+/***************** Exemplos *************************
+
+CREATE TABLE plants(
+	id_planta  NUMBER PRIMARY KEY,
+	nome_planta VARCHAR2(15) 
+);
+
+INSERT INTO plants VALUES (1, 'African Violet'); # DML statement
+
+INSERT INTO plants VALUES (2, 'Amaryllis'); # DML statement
+
+ALTER TABLE plants ADD 
+    ( latin_name VARCHAR2(40) );
+
+GRANT READ ON plants TO scott;
+
+REVOKE READ ON plants FROM scott;
+
+DROP TABLE plants;
+
+/***************** RoolBack ****************************/
+
+No caso das transações que você queira realizar rollback o ideal é fazer uma transaction
+
+SET TRANSACTION NAME 'Update salaries'; -- atualizar salários
+ 
+SAVEPOINT before_salary_update; -- Ponto de restauração
+
+UPDATE employees SET salary=9100 WHERE employee_id=1234 # DML
+
+ROLLBACK TO SAVEPOINT before_salary_update; -- definindo o ponto de retorno
+
+UPDATE employees SET salary=9200 WHERE employee_id=1234 # DML
+
+COMMIT COMMENT 'Updated salaries'; -- Comitando a operação
+
+/*************** Alters Session *****************************/
+
+São controles de tempo, da hora que o usuário entrar até hora que é chutado
+ALTER SESSION 
+   SET NLS_DATE_FORMAT = 'YYYY MM DD HH24:MI:SS';
+
 
 
 
